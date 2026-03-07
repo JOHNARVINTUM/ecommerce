@@ -1,4 +1,57 @@
 @extends('layouts.app')
+
+@section('content')
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Checkout</h1>
+        <p class="mt-2 text-gray-600">Complete your booking details below.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <div class="rounded-2xl border bg-white p-6 shadow-sm">
+                <form action="{{ route('checkout.store', $service->slug) }}" method="POST" class="space-y-6">
+                    @csrf
+
+                    <div>
+                        <label for="customer_name" class="mb-2 block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name', auth()->user()->name) }}"
+                               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        @error('customer_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="customer_email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email', auth()->user()->email) }}"
+                               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        @error('customer_email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="customer_phone" class="mb-2 block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="text" name="customer_phone" id="customer_phone" value="{{ old('customer_phone') }}"
+                               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        @error('customer_phone')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="customer_address" class="mb-2 block text-sm font-medium text-gray-700">Address</label>
+                        <textarea name="customer_address" id="customer_address" rows="3"
+                                  class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">{{ old('customer_address') }}</textarea>
+                        @error('customer_address')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="scheduled_date" class="mb-2 block text-sm font-medium text-gray-700">Preferred Date</label>
                             <input type="date" name="scheduled_date" id="scheduled_date" value="{{ old('scheduled_date') }}"
                                    class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                             @error('scheduled_date')
@@ -28,8 +81,8 @@
 
                     <div class="flex items-center gap-3">
                         <button type="submit"
-                                class="inline-flex items-center rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
-                            Place Order
+                        class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+                        Place Order
                         </button>
 
                         <a href="{{ route('services.show', $service->slug) }}"

@@ -16,28 +16,23 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
-        }
+        $request->authenticate();
 
         $request->session()->regenerate();
 
         $user = $request->user();
 
         if ($user && $user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.orders.index');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if ($user && $user->role === 'provider') {
+            return redirect()->route('provider.services.index');
+        }
+
+        return redirect()->route('orders.index');
     }
 
     public function destroy(Request $request): RedirectResponse

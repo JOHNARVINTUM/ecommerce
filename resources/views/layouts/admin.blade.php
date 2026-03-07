@@ -18,25 +18,25 @@
                 <a href="{{ route('admin.dashboard') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Dashboard
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.notifications.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Notifications
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.users.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Users
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.services.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Services
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.orders.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Orders
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.categories.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Categories
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.team-members.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Team Members
                 </a>
-                <a href="#" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
+                <a href="{{ route('admin.pages.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium hover:bg-slate-800">
                     Pages
                 </a>
             </nav>

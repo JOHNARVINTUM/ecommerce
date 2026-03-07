@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-10">
@@ -31,7 +31,9 @@
                             <td class="px-6 py-4 text-sm text-gray-700">PHP {{ number_format($order->amount, 2) }}</td>
                             <td class="px-6 py-4 text-sm text-gray-700">{{ str_replace('_', ' ', ucfirst($order->status)) }}</td>
                             <td class="px-6 py-4 text-sm">
-                                <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-indigo-600 hover:text-indigo-800">View</a>
+                                <a href="{{ route('admin.orders.show', $order) }}" class="font-medium text-indigo-600 hover:text-indigo-800">
+                                    View
+                                </a>
                             </td>
                         </tr>
                     @empty

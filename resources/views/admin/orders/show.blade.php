@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-10">
@@ -15,7 +15,8 @@
     <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div class="md:col-span-2 rounded-2xl border bg-white p-6 shadow-sm">
             <h2 class="mb-4 text-xl font-semibold text-gray-900">Order Overview</h2>
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 text-sm text-gray-700">
+
+            <div class="grid grid-cols-1 gap-4 text-sm text-gray-700 md:grid-cols-2">
                 <p><span class="font-semibold">Order Number:</span> {{ $order->order_number }}</p>
                 <p><span class="font-semibold">Service:</span> {{ $order->serviceListing->title ?? 'N/A' }}</p>
                 <p><span class="font-semibold">Customer:</span> {{ $order->customer->name ?? $order->customer_name }}</p>
@@ -31,6 +32,7 @@
 
         <div class="rounded-2xl border bg-white p-6 shadow-sm">
             <h2 class="mb-4 text-xl font-semibold text-gray-900">Customer Contact</h2>
+
             <div class="space-y-3 text-sm text-gray-700">
                 <p><span class="font-semibold">Name:</span> {{ $order->customer_name }}</p>
                 <p><span class="font-semibold">Email:</span> {{ $order->customer_email }}</p>
@@ -40,4 +42,4 @@
         </div>
     </div>
 </div>
-@endse
+@endsection

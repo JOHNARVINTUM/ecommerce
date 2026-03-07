@@ -8,6 +8,13 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Provider\OrderController as ProviderOrderController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminTeamMemberController;
+use App\Http\Controllers\Admin\AdminPageController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/about', 'pages.about')->name('about');
@@ -20,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
         $user = auth()->user();
 
         return match ($user->role) {
-            'admin' => redirect()->route('admin.orders.index'),
+            'admin' => redirect()->route('admin.dashboard'),
             'provider' => redirect()->route('provider.services.index'),
             default => redirect()->route('orders.index'),
         };
@@ -45,10 +52,24 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/orders/{order}/status', [ProviderOrderController::class, 'updateStatus'])->name('orders.update-status');
     });
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    });
+  Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
+
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+
+    Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+
+    Route::get('/team-members', [AdminTeamMemberController::class, 'index'])->name('team-members.index');
+
+    Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
+});
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,9 @@
 @extends('layouts.app')
+
+@section('content')
+<div class="max-w-6xl mx-auto px-4 py-10">
+    @if (session('error'))
+        <div class="mb-6 rounded-lg bg-red-100 px-4 py-3 text-red-800">
             {{ session('error') }}
         </div>
     @endif
@@ -46,7 +51,7 @@
 
                 <div class="mt-6">
                     <a href="{{ route('checkout.create', $service->slug) }}"
-                       class="inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
+                       class="inline-flex w-full items-center justify-center rounded-lg border px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                         Book Now
                     </a>
                 </div>
