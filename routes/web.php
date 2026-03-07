@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),
             'provider' => redirect()->route('provider.services.index'),
-            default => redirect()->route('orders.index'),
+            default => redirect()->route('services.index'),
         };
     })->name('dashboard');
 

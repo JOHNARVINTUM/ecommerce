@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('provider.services.index');
         }
 
-        return redirect()->route('orders.index');
+        return redirect()->route('services.index');
     }
 
     public function destroy(Request $request): RedirectResponse

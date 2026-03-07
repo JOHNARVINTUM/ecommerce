@@ -8,15 +8,22 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
-    <div class="min-h-screen flex flex-col">
-        <x-site-header />
-
-        <main class="flex-1">
+    @if (request()->routeIs('home', 'login', 'register', 'services.index', 'about', 'profile.edit'))
+        <main>
             {{ $slot ?? '' }}
             @yield('content')
         </main>
+    @else
+        <div class="min-h-screen flex flex-col">
+            <x-site-header />
 
-        <x-site-footer />
-    </div>
+            <main class="flex-1">
+                {{ $slot ?? '' }}
+                @yield('content')
+            </main>
+
+            <x-site-footer />
+        </div>
+    @endif
 </body>
 </html>

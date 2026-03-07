@@ -1,52 +1,110 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <div class="min-h-screen w-full bg-[#232428]">
+        <div class="w-full">
+            <div class="w-full rounded-none border-x-0 border-t-0 border-b border-[#3a3b3f] bg-[#232428]">
+                <div class="flex items-center justify-between px-7 py-6 sm:px-10 lg:px-12">
+                    <a href="{{ route('home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">
+                        LIMAX
+                    </a>
+                    <a href="{{ route('login') }}" class="rounded-xl bg-[#f5f5f4] px-4 py-2 text-sm font-medium text-black">
+                        Log In
+                    </a>
+                </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                <div class="grid min-h-[calc(100vh-6.25rem)] overflow-hidden border-t border-[#2f3034] bg-[#ecece9] md:grid-cols-[1.08fr_0.92fr]">
+                    <div class="min-h-[340px] md:min-h-[calc(100vh-7rem)]">
+                        <img
+                            src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1400&q=80"
+                            alt="Register visual"
+                            class="h-full w-full object-cover"
+                        >
+                    </div>
+
+                    <div class="flex min-h-[340px] flex-col justify-center p-6 sm:p-10 md:min-h-[calc(100vh-7rem)] md:px-14 md:py-16 lg:px-16">
+                        <h1 class="text-4xl font-bold leading-tight text-[#111] sm:text-5xl lg:text-[4rem]">Sign in to your account</h1>
+                        <p class="mt-2 text-base text-[#444] sm:text-lg">
+                            Have an account?
+                            <a href="{{ route('login') }}" class="underline hover:text-black">Join here</a>
+                        </p>
+
+                        <form method="POST" action="{{ route('register') }}" class="mt-8 max-w-[620px] space-y-4">
+                            @csrf
+
+                            <div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value="{{ old('email') }}"
+                                    required
+                                    autocomplete="username"
+                                    placeholder="Email"
+                                    class="w-full rounded-md border border-[#8b8b8b] bg-[#eceff5] px-4 py-4 text-base text-[#111] placeholder:text-[#636363] focus:border-black focus:outline-none"
+                                >
+                                <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm" />
+                            </div>
+
+                            <div>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    value="{{ old('name') }}"
+                                    required
+                                    autofocus
+                                    autocomplete="name"
+                                    placeholder="Username"
+                                    class="w-full rounded-md border border-[#8b8b8b] bg-[#eceff5] px-4 py-4 text-base text-[#111] placeholder:text-[#636363] focus:border-black focus:outline-none"
+                                >
+                                <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm" />
+                            </div>
+
+                            <div>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                    autocomplete="new-password"
+                                    placeholder="Password"
+                                    class="w-full rounded-md border border-[#8b8b8b] bg-[#eceff5] px-4 py-4 text-base text-[#111] placeholder:text-[#636363] focus:border-black focus:outline-none"
+                                >
+                                <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm" />
+                            </div>
+
+                            <div class="hidden">
+                                <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password">
+                                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-sm" />
+                            </div>
+
+                            <div class="pt-3">
+                                <button type="submit" class="rounded-xl bg-black px-10 py-3 text-base font-semibold text-white">
+                                    Register
+                                </button>
+                            </div>
+                        </form>
+
+                        <p class="mt-16 max-w-[620px] text-sm leading-8 text-[#444]">
+                            By joining Limax, you agree to our Terms of Service and acknowledge our Privacy Policy.
+                            We may occasionally send you emails about updates and services. Learn how we use your personal data in our Privacy Policy.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <x-auth-footer />
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var password = document.getElementById('password');
+            var confirm = document.getElementById('password_confirmation');
+            if (password && confirm) {
+                var sync = function () { confirm.value = password.value; };
+                sync();
+                password.addEventListener('input', sync);
+            }
+        });
+    </script>
 </x-guest-layout>

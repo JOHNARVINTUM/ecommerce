@@ -1,29 +1,150 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.guest')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@php
+    $profile = $user->profile;
+    $settings = $user->settings;
+    $initials = collect(explode(' ', $user->name))->filter()->map(fn ($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('');
+@endphp
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('content')
+    <div class="min-h-screen w-full overflow-x-hidden bg-[#f2f2f2] text-[#111]">
+        <header class="bg-[#1f2024]">
+            <div class="flex w-full items-center justify-between px-4 py-4 sm:px-8 lg:px-10">
+                <a href="{{ route('home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">
+                    LIMAX
+                </a>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
+                <nav class="flex items-center gap-3 text-[11px] text-white sm:gap-8 sm:text-sm">
+                    <a href="{{ route('services.index') }}" class="hover:text-slate-300">Services</a>
+                    <a href="{{ route('about') }}" class="hover:text-slate-300">About Us</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="rounded-xl bg-white px-4 py-2 font-semibold text-black">Log out</button>
+                    </form>
+                </nav>
             </div>
-        </div>
+        </header>
+
+        <section class="px-5 py-10 sm:px-8 lg:px-10">
+            <div class="grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+                <div class="space-y-8">
+                    <aside class="rounded-2xl bg-white p-5 shadow-[0_14px_35px_rgba(0,0,0,0.08)]">
+                        <div class="flex items-center gap-4">
+                            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-[#7d4f34] text-lg font-bold text-white">
+                                {{ $initials }}
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">{{ $user->name }}</p>
+                                <p class="text-sm text-[#7a7a7a]">{{ $user->email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 border-t border-[#e5e5e5] pt-4">
+                            <div class="flex items-center justify-between rounded-xl bg-[#f7f7f7] px-4 py-3">
+                                <span class="font-medium">My Profile</span>
+                                <span class="text-[#7a7a7a]">></span>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between px-4 py-3">
+                                <span class="font-medium">Notification</span>
+                                <span class="text-sm text-[#7a7a7a]">{{ $settings?->notifications_enabled ? 'Allow' : 'Off' }}</span>
+                            </div>
+                            <form method="POST" action="{{ route('logout') }}" class="mt-1">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center justify-between px-4 py-3 text-left font-medium">
+                                    <span>Log Out</span>
+                                    <span class="text-[#7a7a7a]">></span>
+                                </button>
+                            </form>
+                        </div>
+                    </aside>
+
+                    <aside class="rounded-2xl bg-white p-5 shadow-[0_14px_35px_rgba(0,0,0,0.08)]">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-2xl font-semibold">Settings</h2>
+                            <span class="text-[#7a7a7a]">×</span>
+                        </div>
+                        <div class="mt-4 border-t border-[#e5e5e5] pt-3">
+                            <div class="flex items-center justify-between py-3">
+                                <span>Theme</span>
+                                <span class="text-[#7a7a7a]">{{ ucfirst($settings?->theme ?? 'light') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between py-3">
+                                <span>Language</span>
+                                <span class="text-[#7a7a7a]">{{ strtoupper($settings?->language ?? 'eng') }}</span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <section class="rounded-2xl bg-white p-6 shadow-[0_14px_35px_rgba(0,0,0,0.08)] sm:p-8">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-[#7d4f34] text-lg font-bold text-white">
+                            {{ $initials }}
+                        </div>
+                        <div>
+                            <p class="text-2xl font-semibold">{{ $user->name }}</p>
+                            <p class="text-base text-[#7a7a7a]">{{ $user->email }}</p>
+                        </div>
+                    </div>
+
+                    @if (session('status') === 'profile-updated')
+                        <div class="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                            Profile updated successfully.
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('profile.update') }}" class="mt-6">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="space-y-2 border-t border-[#e5e5e5] pt-5">
+                            <div class="grid gap-3 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                                <label for="name" class="text-xl font-medium">Name</label>
+                                <div>
+                                    <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" class="w-full border-0 bg-transparent px-0 text-right text-xl text-[#666] focus:outline-none md:text-right" required>
+                                    <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm" />
+                                </div>
+                            </div>
+
+                            <div class="border-t border-[#efefef]"></div>
+
+                            <div class="grid gap-3 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                                <label for="email" class="text-xl font-medium">Email account</label>
+                                <div>
+                                    <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="w-full border-0 bg-transparent px-0 text-right text-xl text-[#666] focus:outline-none md:text-right" required>
+                                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm" />
+                                </div>
+                            </div>
+
+                            <div class="border-t border-[#efefef]"></div>
+
+                            <div class="grid gap-3 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                                <label for="phone" class="text-xl font-medium">Mobile number</label>
+                                <div>
+                                    <input id="phone" name="phone" type="text" value="{{ old('phone', $profile?->phone) }}" placeholder="Add number" class="w-full border-0 bg-transparent px-0 text-right text-xl text-[#666] placeholder:text-[#888] focus:outline-none md:text-right">
+                                    <x-input-error :messages="$errors->get('phone')" class="mt-2 text-sm" />
+                                </div>
+                            </div>
+
+                            <div class="border-t border-[#efefef]"></div>
+
+                            <div class="grid gap-3 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                                <label for="location" class="text-xl font-medium">Location</label>
+                                <div>
+                                    <input id="location" name="location" type="text" value="{{ old('location', $profile?->location) }}" placeholder="Add location" class="w-full border-0 bg-transparent px-0 text-right text-xl text-[#666] placeholder:text-[#888] focus:outline-none md:text-right">
+                                    <x-input-error :messages="$errors->get('location')" class="mt-2 text-sm" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="mt-8 rounded-xl bg-[#3b82f6] px-6 py-3 text-base font-semibold text-white">
+                            Save Change
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </section>
+
+        <x-auth-footer />
     </div>
-</x-app-layout>
+@endsection
