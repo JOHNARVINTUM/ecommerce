@@ -20,32 +20,35 @@ Route::middleware(['auth'])->group(function () {
         $user = auth()->user();
 
         return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
+            'admin' => redirect()->route('admin.orders.index'),
             'provider' => redirect()->route('provider.services.index'),
-            default => view('dashboard'),
+            default => redirect()->route('orders.index'),
         };
     })->name('dashboard');
-});
 
-Route::middleware(['auth', 'role:provider'])
-    ->prefix('provider')
-    ->name('provider.')
-    ->group(function () {
+    Route::get('/services/{service:slug}/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
+    Route::post('/services/{service:slug}/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/my-orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    Route::prefix('provider')->name('provider.')->group(function () {
         Route::get('/services', [ProviderServiceController::class, 'index'])->name('services.index');
         Route::get('/services/create', [ProviderServiceController::class, 'create'])->name('services.create');
         Route::post('/services', [ProviderServiceController::class, 'store'])->name('services.store');
         Route::get('/services/{service}/edit', [ProviderServiceController::class, 'edit'])->name('services.edit');
         Route::put('/services/{service}', [ProviderServiceController::class, 'update'])->name('services.update');
         Route::delete('/services/{service}', [ProviderServiceController::class, 'destroy'])->name('services.destroy');
+
+        Route::get('/orders', [ProviderOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [ProviderOrderController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{order}/status', [ProviderOrderController::class, 'updateStatus'])->name('orders.update-status');
     });
 
-Route::middleware(['auth', 'role:admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     });
-
-
+});
 
 require __DIR__.'/auth.php';

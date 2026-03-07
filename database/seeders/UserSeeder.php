@@ -14,27 +14,33 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Admin
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'limax.feu@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        $admin = User::updateOrCreate(
+            ['email' => 'limax.feu@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
-        UserProfile::create([
-            'user_id' => $admin->id,
-            'full_name' => 'Admin User',
-            'phone' => '09000000001',
-            'location' => 'Manila, Philippines',
-            'bio' => 'System administrator for LIMAX.',
-        ]);
+        UserProfile::updateOrCreate(
+            ['user_id' => $admin->id],
+            [
+                'full_name' => 'Admin User',
+                'phone' => '09000000001',
+                'location' => 'Manila, Philippines',
+                'bio' => 'System administrator for LIMAX.',
+            ]
+        );
 
-        UserSetting::create([
-            'user_id' => $admin->id,
-            'language' => 'en',
-            'theme' => 'light',
-            'notifications_enabled' => true,
-        ]);
+        UserSetting::updateOrCreate(
+            ['user_id' => $admin->id],
+            [
+                'language' => 'en',
+                'theme' => 'light',
+                'notifications_enabled' => true,
+            ]
+        );
 
         // Providers
         $providers = [
@@ -80,41 +86,49 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($providers as $providerData) {
-            $provider = User::create([
-                'name' => $providerData['name'],
-                'email' => $providerData['email'],
-                'password' => Hash::make('password'),
-                'role' => 'provider',
-            ]);
+            $provider = User::updateOrCreate(
+                ['email' => $providerData['email']],
+                [
+                    'name' => $providerData['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'provider',
+                ]
+            );
 
-            UserProfile::create([
-                'user_id' => $provider->id,
-                'full_name' => $providerData['full_name'],
-                'phone' => '09170000000',
-                'location' => $providerData['country'],
-                'bio' => $providerData['bio'],
-            ]);
+            UserProfile::updateOrCreate(
+                ['user_id' => $provider->id],
+                [
+                    'full_name' => $providerData['full_name'],
+                    'phone' => '09170000000',
+                    'location' => $providerData['country'],
+                    'bio' => $providerData['bio'],
+                ]
+            );
 
-            UserSetting::create([
-                'user_id' => $provider->id,
-                'language' => 'en',
-                'theme' => 'light',
-                'notifications_enabled' => true,
-            ]);
+            UserSetting::updateOrCreate(
+                ['user_id' => $provider->id],
+                [
+                    'language' => 'en',
+                    'theme' => 'light',
+                    'notifications_enabled' => true,
+                ]
+            );
 
-            ProviderProfile::create([
-                'user_id' => $provider->id,
-                'display_name' => $providerData['display_name'],
-                'headline' => $providerData['headline'],
-                'bio' => $providerData['bio'],
-                'country' => $providerData['country'],
-                'languages' => $providerData['languages'],
-                'response_time' => $providerData['response_time'],
-                'last_delivery_note' => $providerData['last_delivery_note'],
-                'member_since' => now()->subMonths(rand(3, 18))->toDateString(),
-                'avatar_path' => null,
-                'github_url' => $providerData['github_url'],
-            ]);
+            ProviderProfile::updateOrCreate(
+                ['user_id' => $provider->id],
+                [
+                    'display_name' => $providerData['display_name'],
+                    'headline' => $providerData['headline'],
+                    'bio' => $providerData['bio'],
+                    'country' => $providerData['country'],
+                    'languages' => $providerData['languages'],
+                    'response_time' => $providerData['response_time'],
+                    'last_delivery_note' => $providerData['last_delivery_note'],
+                    'member_since' => now()->subMonths(rand(3, 18))->toDateString(),
+                    'avatar_path' => null,
+                    'github_url' => $providerData['github_url'],
+                ]
+            );
         }
 
         // Customers
@@ -127,27 +141,33 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($customers as $customerData) {
-            $customer = User::create([
-                'name' => $customerData['name'],
-                'email' => $customerData['email'],
-                'password' => Hash::make('password'),
-                'role' => 'customer',
-            ]);
+            $customer = User::updateOrCreate(
+                ['email' => $customerData['email']],
+                [
+                    'name' => $customerData['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'customer',
+                ]
+            );
 
-            UserProfile::create([
-                'user_id' => $customer->id,
-                'full_name' => $customerData['name'],
-                'phone' => '09990000000',
-                'location' => 'Philippines',
-                'bio' => 'LIMAX customer account.',
-            ]);
+            UserProfile::updateOrCreate(
+                ['user_id' => $customer->id],
+                [
+                    'full_name' => $customerData['name'],
+                    'phone' => '09990000000',
+                    'location' => 'Philippines',
+                    'bio' => 'LIMAX customer account.',
+                ]
+            );
 
-            UserSetting::create([
-                'user_id' => $customer->id,
-                'language' => 'en',
-                'theme' => 'light',
-                'notifications_enabled' => true,
-            ]);
+            UserSetting::updateOrCreate(
+                ['user_id' => $customer->id],
+                [
+                    'language' => 'en',
+                    'theme' => 'light',
+                    'notifications_enabled' => true,
+                ]
+            );
         }
     }
 }

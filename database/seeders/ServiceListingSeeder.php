@@ -189,22 +189,24 @@ class ServiceListingSeeder extends Seeder
                 continue;
             }
 
-            ServiceListing::create([
-                'service_category_id' => $category->id,
-                'provider_user_id' => $provider->id,
-                'title' => $listing['title'],
-                'slug' => $listing['slug'],
-                'short_description' => $listing['short_description'],
-                'description' => $listing['description'],
-                'price' => $listing['price'],
-                'currency' => $listing['currency'],
-                'sold_count' => $listing['sold_count'],
-                'rating_avg' => $listing['rating_avg'],
-                'rating_count' => $listing['rating_count'],
-                'delivery_time_days' => $listing['delivery_time_days'],
-                'revisions' => $listing['revisions'],
-                'is_active' => $listing['is_active'],
-            ]);
+            ServiceListing::updateOrCreate(
+                ['slug' => $listing['slug']],
+                [
+                    'service_category_id' => $category->id,
+                    'provider_user_id' => $provider->id,
+                    'title' => $listing['title'],
+                    'short_description' => $listing['short_description'],
+                    'description' => $listing['description'],
+                    'price' => $listing['price'],
+                    'currency' => $listing['currency'],
+                    'sold_count' => $listing['sold_count'],
+                    'rating_avg' => $listing['rating_avg'],
+                    'rating_count' => $listing['rating_count'],
+                    'delivery_time_days' => $listing['delivery_time_days'],
+                    'revisions' => $listing['revisions'],
+                    'is_active' => $listing['is_active'],
+                ]
+            );
         }
     }
 }

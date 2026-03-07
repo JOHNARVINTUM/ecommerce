@@ -1,4 +1,12 @@
 <?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Models\ServiceListing;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 class CheckoutController extends Controller
 {
     public function create(ServiceListing $service)
