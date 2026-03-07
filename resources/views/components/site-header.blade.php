@@ -13,22 +13,10 @@
 
         <div class="flex items-center gap-3">
             @auth
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}"
-                       class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                        Dashboard
-                    </a>
-                @elseif(auth()->user()->role === 'provider')
-                    <a href="{{ route('provider.services.index') }}"
-                       class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('dashboard') }}"
-                       class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                        Dashboard
-                    </a>
-                @endif
+                <a href="{{ route('dashboard') }}"
+                   class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    Dashboard
+                </a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
