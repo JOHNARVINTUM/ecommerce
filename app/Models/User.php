@@ -2,15 +2,43 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserProfile;
+use App\Models\UserSetting;
+use App\Models\ProviderProfile;
+use App\Models\ServiceListing;
+use App\Models\ServiceCategory;
+use App\Models\Order;
+
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_CUSTOMER = 'customer';
+    public const ROLE_PROVIDER = 'provider';
+    public function profile()
+{
+    return $this->hasOne(UserProfile::class);
+}
+
+public function settings()
+{
+    return $this->hasOne(UserSetting::class);
+}
+
+public function providerProfile()
+{
+    return $this->hasOne(ProviderProfile::class);
+}
+
+public function serviceListings()
+{
+    return $this->hasMany(ServiceListing::class, 'provider_user_id');
+}
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +49,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -45,4 +74,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === self::ROLE_CUSTOMER;
+    }
+
+    public function isProvider(): bool
+    {
+        return $this->role === self::ROLE_PROVIDER;
+    }
+
+    public function customerOrders()
+{
+    return $this->hasMany(Order::class, 'customer_user_id');
+}
+
+public function providerOrders()
+{
+    return $this->hasMany(Order::class, 'provider_user_id');
+}
 }
