@@ -54,6 +54,12 @@
                         <a href="{{ route('home') }}" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                             View Site
                         </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="rounded-lg border border-rose-300 px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-50">
+                                Logout
+                            </button>
+                        </form>
                     </div>
                 </div>
             </header>

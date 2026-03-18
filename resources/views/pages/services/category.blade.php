@@ -33,57 +33,53 @@
         </header>
 
         <section class="relative overflow-hidden bg-black">
-            <img src="{{ $heroImage }}" alt="Services hero" class="h-[180px] w-full object-cover sm:h-[220px]">
+            <img src="{{ $categoryImages[$category->slug] ?? $heroImage }}" alt="{{ $category->name }}" class="h-[180px] w-full object-cover sm:h-[220px]">
             <div class="absolute inset-0 bg-black/55"></div>
             <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
-                <h1 class="text-4xl font-bold sm:text-6xl">Services</h1>
-                <p class="mt-3 text-sm sm:text-lg">Technology-driven services delivered by skilled IT professionals.</p>
+                <h1 class="text-4xl font-bold sm:text-6xl">{{ $category->name }}</h1>
+                <p class="mt-3 text-sm sm:text-lg">{{ $category->headline ?: 'Technology-driven services delivered by skilled IT professionals.' }}</p>
             </div>
         </section>
 
         <section class="px-5 py-10 sm:px-8 lg:px-10">
-            <div class="mb-5">
-                <h2 class="text-2xl font-bold sm:text-3xl">Service Categories</h2>
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-2xl font-bold sm:text-3xl">{{ $category->name }} Posts</h2>
+                <a href="{{ route('services.index') }}" class="rounded-lg border border-[#d8d7d0] bg-white px-4 py-2 text-sm font-semibold hover:bg-[#f8f8f4]">
+                    Back to Categories
+                </a>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                @forelse($categories as $category)
+                @forelse($services as $service)
                     @php
-                        $cardImage = $categoryImages[$category->slug] ?? $heroImage;
+                        $serviceImage = $categoryImages[$service->category->slug ?? ''] ?? $heroImage;
                     @endphp
                     <article class="overflow-hidden rounded-xl border border-[#d8d7d0] bg-white shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
-                        <img src="{{ $cardImage }}" alt="{{ $category->name }}" class="h-44 w-full object-cover">
+                        <img src="{{ $serviceImage }}" alt="{{ $service->title }}" class="h-44 w-full object-cover">
                         <div class="p-4">
-                            <h2 class="text-2xl font-semibold">{{ $category->name }}</h2>
+                            <h3 class="text-2xl font-semibold">{{ $service->title }}</h3>
                             <p class="mt-2 min-h-[72px] text-sm leading-6 text-[#696969]">
-                                {{ $category->headline ?: $category->description }}
+                                {{ $service->short_description ?: \Illuminate\Support\Str::limit($service->description, 90) }}
                             </p>
-                            <a
-                                href="{{ route('services.category', $category) }}"
-                                class="mt-4 inline-flex items-center text-sm font-semibold text-[#111]"
-                            >
+                            <div class="mt-3 text-sm font-medium text-[#111]">
+                                {{ $service->currency }} {{ number_format($service->price, 2) }}
+                            </div>
+                            <a href="{{ route('services.show', $service) }}" class="mt-4 inline-flex items-center text-sm font-semibold text-[#111]">
                                 See More
                                 <span class="ml-1">></span>
                             </a>
                         </div>
                     </article>
                 @empty
-                    <p class="text-base text-[#5a5a5a]">No categories found.</p>
+                    <p class="text-base text-[#5a5a5a]">No service posts found for this category.</p>
                 @endforelse
             </div>
-        </section>
 
-        <section class="bg-[#1f2024] px-5 py-10 text-white sm:px-8 lg:px-10">
-            <p class="text-sm text-slate-300">This is the future of IT freelancing.</p>
-            <h2 class="mt-3 max-w-4xl text-4xl font-bold leading-tight sm:text-5xl">
-                The next generation technology freelancing platform.
-            </h2>
-            <p class="mt-6 max-w-6xl text-xs leading-6 text-slate-300 sm:text-sm sm:leading-7">
-                LIMAX is a fast, reliable, and secure freelancing platform built exclusively for IT and digital services. We connect businesses with skilled
-                professionals in programming, web design, graphic design, video editing, and other technology-driven fields. Every project is handled
-                by verified freelancers who focus on quality, efficiency, and results. Whether you're building software, designing a website, or creating
-                digital content, LIMAX helps you turn ideas into real solutions without the complexity.
-            </p>
+            @if ($services->hasPages())
+                <div class="mt-8">
+                    {{ $services->links() }}
+                </div>
+            @endif
         </section>
 
         <x-auth-footer />
