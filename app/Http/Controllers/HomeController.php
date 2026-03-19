@@ -22,4 +22,15 @@ class HomeController extends Controller
 
         return view('pages.home', compact('featuredCategories', 'featuredServices'));
     }
+
+    public function userHome()
+    {
+        $featuredServices = ServiceListing::with(['category', 'provider'])
+            ->where('is_active', true)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('pages.user-home', compact('featuredServices'));
+    }
 }

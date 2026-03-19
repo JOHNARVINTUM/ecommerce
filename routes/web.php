@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
 use App\Http\Controllers\Admin\AdminPageController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/about', 'pages.about')->name('about');
@@ -24,6 +25,12 @@ Route::get('/services/category/{category:slug}', [ServiceController::class, 'cat
 Route::get('/services/{service}', [ServiceController::class, 'show'])->name('services.show');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/user-home', [HomeController::class, 'userHome'])->name('user.home');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     Route::get('/dashboard', function () {
         $user = auth()->user();
 
