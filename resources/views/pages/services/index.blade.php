@@ -1,14 +1,15 @@
 @extends('layouts.guest')
 
 @php
-    $heroImage = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80';
+    $exampleImage = 'https://picsum.photos/seed/services-example/1400/900';
+    $heroImage = $exampleImage;
     $categoryImages = [
-        'programming' => 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80',
-        'web-design' => 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=1200&q=80',
-        'graphic-design' => 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80',
-        'video-editing' => 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80',
-        'photo-editing' => 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
-        'logo-making' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80',
+        'programming' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80',
+        'web-design' => 'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=1200&q=80',
+        'graphic-design' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80',
+        'video-editing' => 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1200&q=80',
+        'photo-editing' => 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80',
+        'logo-making' => 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1200&q=80',
     ];
 @endphp
 
@@ -61,20 +62,17 @@
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 @forelse($categories as $category)
                     @php
-                        $cardImage = $categoryImages[$category->slug] ?? $heroImage;
+                        $cardImage = $categoryImages[$category->slug] ?? $exampleImage;
                     @endphp
                     <article class="overflow-hidden rounded-xl border border-[#d8d7d0] bg-white shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
                         <img src="{{ $cardImage }}" alt="{{ $category->name }}" class="h-44 w-full object-cover">
                         <div class="p-4">
                             <h2 class="text-2xl font-semibold">{{ $category->name }}</h2>
                             <p class="mt-2 min-h-[72px] text-sm leading-6 text-[#696969]">
-                                {{ $category->headline ?: $category->description }}
+                                {{ $category->headline ?: ($category->description ?: 'add description here') }}
                             </p>
-                            <a
-                                href="{{ route('services.category', $category) }}"
-                                class="mt-4 inline-flex items-center text-sm font-semibold text-[#111]"
-                            >
-                                See More
+                            <a href="{{ route('services.category', $category) }}" class="mt-4 inline-flex items-center text-sm font-semibold text-[#111]">
+                                Explore Service
                                 <span class="ml-1">></span>
                             </a>
                         </div>
