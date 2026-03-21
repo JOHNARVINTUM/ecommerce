@@ -24,6 +24,7 @@ class CheckoutController extends Controller
 
         return view('pages.checkout.create', [
             'service' => $service,
+            'paymongoCheckoutUrl' => config('services.paymongo.checkout_url'),
         ]);
     }
 
@@ -45,7 +46,17 @@ class CheckoutController extends Controller
             'scheduled_date' => ['nullable', 'date', 'after_or_equal:today'],
             'scheduled_time' => ['nullable'],
             'notes' => ['nullable', 'string'],
+            'payment_method' => ['required', 'in:paymongo_checkout_demo'],
+            'simulate_payment_confirmation' => ['required', 'accepted'],
         ]);
+
+        $paymentMethod = $validated['payment_method'];
+        $paymentWasSimulated = $paymentMethod === 'paymongo_checkout_demo';
+        $paymentSummary = 'Payment simulation: PayMongo hosted checkout demo (' . config('services.paymongo.checkout_url') . ')';
+        $orderNotes = trim(implode("\n\n", array_filter([
+            $validated['notes'] ?? null,
+            $paymentWasSimulated ? $paymentSummary : null,
+        ])));
 
         $order = Order::create([
             'customer_user_id' => auth()->id(),
@@ -57,12 +68,12 @@ class CheckoutController extends Controller
             'scheduled_date' => $validated['scheduled_date'] ?? null,
             'scheduled_time' => $validated['scheduled_time'] ?? null,
             'status' => Order::STATUS_PENDING,
-            'payment_status' => Order::PAYMENT_UNPAID,
+            'payment_status' => $paymentWasSimulated ? Order::PAYMENT_PAID : Order::PAYMENT_UNPAID,
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],
             'customer_phone' => $validated['customer_phone'] ?? null,
             'customer_address' => $validated['customer_address'] ?? null,
-            'notes' => $validated['notes'] ?? null,
+            'notes' => $orderNotes !== '' ? $orderNotes : null,
         ]);
 
         try {
@@ -78,6 +89,8 @@ class CheckoutController extends Controller
 
         return redirect()
             ->route('orders.show', $order)
-            ->with('success', 'Your booking has been placed successfully.');
+            ->with('success', $paymentWasSimulated
+                ? 'Your booking has been placed and the PayMongo payment was simulated successfully.'
+                : 'Your booking has been placed successfully.');
     }
 }

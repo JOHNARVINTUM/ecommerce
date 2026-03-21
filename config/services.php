@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'paymongo' => [
+        'checkout_url' => env('PAYMONGO_CHECKOUT_URL', 'https://checkout.paymongo.com/b18fba4a4b552511204485d7'),
+    ],
+
 ];
