@@ -109,7 +109,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/team-members/{user}', [AdminTeamMemberController::class, 'update'])->name('team-members.update');
     Route::delete('/team-members/{user}', [AdminTeamMemberController::class, 'destroy'])->name('team-members.destroy');
 
-    Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
 });
 });
 
