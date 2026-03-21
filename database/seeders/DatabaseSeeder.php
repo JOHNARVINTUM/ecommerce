@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ServiceCategorySeeder::class,
             ServiceListingSeeder::class,
+            OrderSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }

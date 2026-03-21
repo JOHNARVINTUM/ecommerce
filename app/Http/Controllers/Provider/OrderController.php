@@ -19,7 +19,11 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('provider.orders.index', compact('orders'));
+        $newOrdersCount = Order::where('provider_user_id', $user->id)
+            ->whereIn('status', [Order::STATUS_PENDING, Order::STATUS_CONFIRMED])
+            ->count();
+
+        return view('provider.orders.index', compact('orders', 'newOrdersCount'));
     }
 
     public function show(Order $order)
@@ -42,7 +46,7 @@ class OrderController extends Controller
         abort_unless($order->provider_user_id === $user->id, 403);
 
         $validated = $request->validate([
-            'status' => ['required', 'in:pending,confirmed,in_progress,completed,cancelled'],
+            'status' => ['required', 'in:in_progress,completed'],
             'payment_status' => ['required', 'in:unpaid,paid,refunded'],
         ]);
 

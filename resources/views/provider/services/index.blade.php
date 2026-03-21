@@ -7,10 +7,16 @@
             <p class="mt-1 text-sm text-slate-600">Manage the services you offer on LIMAX.</p>
         </div>
 
-        <a href="{{ route('provider.services.create') }}"
-           class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-            Add Service
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('provider.orders.index') }}"
+               class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                Orders ({{ $newOrdersCount }} new)
+            </a>
+            <a href="{{ route('provider.services.create') }}"
+               class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+                Add Service
+            </a>
+        </div>
     </div>
 
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

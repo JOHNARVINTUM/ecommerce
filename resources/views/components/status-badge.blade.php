@@ -2,7 +2,7 @@
 
 @php
     $classes = match($status) {
-        'successful', 'paid', 'active' => 'bg-emerald-100 text-emerald-700',
+        'successful', 'completed', 'paid', 'active' => 'bg-emerald-100 text-emerald-700',
         'in_progress', 'pending' => 'bg-amber-100 text-amber-700',
         'cancelled', 'failed', 'inactive' => 'bg-rose-100 text-rose-700',
         default => 'bg-slate-100 text-slate-700',

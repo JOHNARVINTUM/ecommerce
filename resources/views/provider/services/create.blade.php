@@ -7,7 +7,7 @@
     </div>
 
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('provider.services.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('provider.services.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div>
@@ -73,6 +73,25 @@
                     <input type="number" name="revisions" id="revisions" value="{{ old('revisions') }}"
                            class="w-full rounded-xl border border-slate-300 px-4 py-3">
                     @error('revisions') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2">
+                <div>
+                    <label for="thumbnail" class="mb-2 block text-sm font-medium text-slate-700">Thumbnail Image</label>
+                    <input type="file" name="thumbnail" id="thumbnail" accept="image/*"
+                           class="w-full rounded-xl border border-slate-300 px-4 py-3">
+                    <p class="mt-1 text-xs text-slate-500">Required. JPG, PNG, or WEBP up to 2MB.</p>
+                    @error('thumbnail') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="gallery_images" class="mb-2 block text-sm font-medium text-slate-700">Gallery Images</label>
+                    <input type="file" name="gallery_images[]" id="gallery_images" accept="image/*" multiple
+                           class="w-full rounded-xl border border-slate-300 px-4 py-3">
+                    <p class="mt-1 text-xs text-slate-500">Optional. Up to 8 images, 4MB each.</p>
+                    @error('gallery_images') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                    @error('gallery_images.*') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
                 </div>
             </div>
 

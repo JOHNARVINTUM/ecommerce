@@ -2,9 +2,14 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-10">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Provider Orders</h1>
-        <p class="mt-2 text-gray-600">Manage bookings made for your services.</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Provider Orders</h1>
+            <p class="mt-2 text-gray-600">Manage bookings made for your services.</p>
+        </div>
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800">
+            New Orders: {{ $newOrdersCount }}
+        </div>
     </div>
 
     @if (session('success'))
@@ -33,7 +38,7 @@
                             <td class="px-6 py-4 text-sm text-gray-700">{{ $order->customer->name ?? $order->customer_name }}</td>
                             <td class="px-6 py-4 text-sm text-gray-700">{{ $order->serviceListing->title ?? 'N/A' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-700">PHP {{ number_format($order->amount, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">{{ str_replace('_', ' ', ucfirst($order->status)) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">{{ $order->status_label }}</td>
                             <td class="px-6 py-4 text-sm">
                                 <a href="{{ route('provider.orders.show', $order) }}" class="font-medium text-indigo-600 hover:text-indigo-800">View</a>
                             </td>

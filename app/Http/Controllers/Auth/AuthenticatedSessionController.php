@@ -36,10 +36,10 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user && $user->role === 'provider') {
-            return redirect()->route('provider.services.index');
+            return redirect()->route('provider.orders.index');
         }
 
-        return redirect()->route('services.index');
+        return redirect()->route('user.home');
     }
 
     public function destroy(Request $request): RedirectResponse

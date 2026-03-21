@@ -7,7 +7,7 @@
     </div>
 
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('provider.services.update', $service) }}" method="POST" class="space-y-6">
+        <form action="{{ route('provider.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
 
@@ -80,6 +80,45 @@
                     @error('revisions') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
                 </div>
             </div>
+
+            <div class="grid gap-6 md:grid-cols-2">
+                <div>
+                    <label for="thumbnail" class="mb-2 block text-sm font-medium text-slate-700">Thumbnail Image</label>
+                    @if ($service->thumbnail_path)
+                        <img src="{{ $service->thumbnail_url }}" alt="Current thumbnail" class="mb-3 h-28 w-40 rounded-lg border border-slate-300 object-cover">
+                    @endif
+                    <input type="file" name="thumbnail" id="thumbnail" accept="image/*"
+                           class="w-full rounded-xl border border-slate-300 px-4 py-3">
+                    <p class="mt-1 text-xs text-slate-500">Leave empty to keep current thumbnail.</p>
+                    @error('thumbnail') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="gallery_images" class="mb-2 block text-sm font-medium text-slate-700">Add Gallery Images</label>
+                    <input type="file" name="gallery_images[]" id="gallery_images" accept="image/*" multiple
+                           class="w-full rounded-xl border border-slate-300 px-4 py-3">
+                    <p class="mt-1 text-xs text-slate-500">Optional. Up to 8 total images.</p>
+                    @error('gallery_images') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                    @error('gallery_images.*') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            @if (!empty($service->gallery_images))
+                <div>
+                    <p class="mb-2 text-sm font-medium text-slate-700">Current Gallery Images</p>
+                    <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                        @foreach ($service->gallery_images as $imagePath)
+                            <label class="rounded-lg border border-slate-300 bg-slate-50 p-2">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($imagePath) }}" alt="Gallery image" class="h-24 w-full rounded object-cover">
+                                <span class="mt-2 inline-flex items-center gap-2 text-xs text-slate-700">
+                                    <input type="checkbox" name="keep_existing_gallery[]" value="{{ $imagePath }}" checked>
+                                    Keep image
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             <div class="flex items-center gap-3">
                 <input type="checkbox" name="is_active" id="is_active" value="1"

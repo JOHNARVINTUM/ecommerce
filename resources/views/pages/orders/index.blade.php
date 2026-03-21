@@ -61,8 +61,11 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $order->provider->name ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">PHP {{ number_format($order->amount, 2) }}</td>
                                 <td class="px-6 py-4 text-sm">
-                                    <span class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800">
-                                        {{ str_replace('_', ' ', ucfirst($order->status)) }}
+                                    <span class="rounded-full px-3 py-1 text-xs font-semibold
+                                        {{ $order->status === 'completed' ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ $order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                        {{ !in_array($order->status, ['completed', 'pending']) ? 'bg-gray-100 text-gray-800' : '' }}">
+                                        {{ $order->status_label }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm">

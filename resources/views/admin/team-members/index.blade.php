@@ -2,7 +2,12 @@
 
 @section('content')
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 class="text-2xl font-bold text-slate-900">Team Members</h1>
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-slate-900">Team Members</h1>
+            <a href="{{ route('admin.team-members.create') }}" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+                Add Provider
+            </a>
+        </div>
 
         <div class="mt-6 overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">

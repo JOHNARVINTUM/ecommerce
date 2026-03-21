@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderVerificationMail;
 use App\Models\Order;
 use App\Models\ServiceListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
@@ -61,6 +64,17 @@ class CheckoutController extends Controller
             'customer_address' => $validated['customer_address'] ?? null,
             'notes' => $validated['notes'] ?? null,
         ]);
+
+        try {
+            $order->loadMissing('serviceListing');
+            Mail::to($order->customer_email)->send(new OrderVerificationMail($order));
+        } catch (\Throwable $exception) {
+            Log::warning('Order confirmation email failed.', [
+                'order_id' => $order->id,
+                'email' => $order->customer_email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         return redirect()
             ->route('orders.show', $order)

@@ -11,6 +11,7 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Name</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Email</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Role</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -19,6 +20,11 @@
                             <td class="px-4 py-3 text-sm text-slate-800">{{ $user->name }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ $user->email }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ ucfirst($user->role) }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-600">
+                                <a href="{{ route('admin.users.show', $user) }}" class="font-semibold text-indigo-600 hover:text-indigo-800">
+                                    View More
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

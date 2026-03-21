@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Provider\OrderController as ProviderOrderController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -37,12 +38,17 @@ Route::middleware(['auth'])->group(function () {
         return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),
             'provider' => redirect()->route('provider.services.index'),
-            default => redirect()->route('services.index'),
+            default => redirect()->route('user.home'),
         };
     })->name('dashboard');
 
     Route::get('/services/{service:slug}/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/services/{service:slug}/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/{service:slug}', [CartController::class, 'store'])->name('cart.store');
+    Route::patch('/cart/{service:slug}/quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
+    Route::delete('/cart/{service:slug}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
 
     Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/my-orders/{order}', [OrderController::class, 'show'])->name('orders.show');
@@ -66,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
 
     Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
 
@@ -75,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
 
     Route::get('/team-members', [AdminTeamMemberController::class, 'index'])->name('team-members.index');
+    Route::get('/team-members/create', [AdminTeamMemberController::class, 'create'])->name('team-members.create');
+    Route::post('/team-members', [AdminTeamMemberController::class, 'store'])->name('team-members.store');
 
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
 });

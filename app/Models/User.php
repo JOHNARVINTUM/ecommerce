@@ -11,6 +11,7 @@ use App\Models\ProviderProfile;
 use App\Models\ServiceListing;
 use App\Models\ServiceCategory;
 use App\Models\Order;
+use App\Models\Payment;
 
 
 class User extends Authenticatable
@@ -98,5 +99,15 @@ public function serviceListings()
 public function providerOrders()
 {
     return $this->hasMany(Order::class, 'provider_user_id');
+}
+
+public function paymentsMade()
+{
+    return $this->hasMany(Payment::class, 'payer_user_id');
+}
+
+public function paymentsReceived()
+{
+    return $this->hasMany(Payment::class, 'payee_user_id');
 }
 }

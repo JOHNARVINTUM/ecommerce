@@ -1,4 +1,20 @@
 @extends('layouts.app')
+
+@section('content')
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Order Details</h1>
+            <p class="mt-2 text-gray-600">Review booking details and update progress.</p>
+        </div>
+        <a href="{{ route('provider.orders.index') }}" class="rounded-lg border px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+            Back to Orders
+        </a>
+    </div>
+
+    @if (session('success'))
+        <div class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-800">
+            {{ session('success') }}
         </div>
     @endif
 
@@ -9,6 +25,8 @@
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 text-sm text-gray-700">
                 <p><span class="font-semibold">Order Number:</span> {{ $order->order_number }}</p>
                 <p><span class="font-semibold">Service:</span> {{ $order->serviceListing->title ?? 'N/A' }}</p>
+                <p><span class="font-semibold">Current Status:</span> {{ $order->status_label }}</p>
+                <p><span class="font-semibold">Payment Status:</span> {{ ucfirst($order->payment_status) }}</p>
                 <p><span class="font-semibold">Customer Name:</span> {{ $order->customer_name }}</p>
                 <p><span class="font-semibold">Customer Email:</span> {{ $order->customer_email }}</p>
                 <p><span class="font-semibold">Phone:</span> {{ $order->customer_phone ?: 'N/A' }}</p>
@@ -29,11 +47,8 @@
                 <div>
                     <label for="status" class="mb-2 block text-sm font-medium text-gray-700">Order Status</label>
                     <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="pending" @selected($order->status === 'pending')>Pending</option>
-                        <option value="confirmed" @selected($order->status === 'confirmed')>Confirmed</option>
-                        <option value="in_progress" @selected($order->status === 'in_progress')>In Progress</option>
+                        <option value="in_progress" @selected($order->status === 'in_progress')>On Going</option>
                         <option value="completed" @selected($order->status === 'completed')>Completed</option>
-                        <option value="cancelled" @selected($order->status === 'cancelled')>Cancelled</option>
                     </select>
                     @error('status')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

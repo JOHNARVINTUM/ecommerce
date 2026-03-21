@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\ServiceCategory;
 use App\Models\ServiceListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProviderServiceController extends Controller
@@ -17,7 +19,11 @@ class ProviderServiceController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('provider.services.index', compact('services'));
+        $newOrdersCount = Order::where('provider_user_id', auth()->id())
+            ->whereIn('status', [Order::STATUS_PENDING, Order::STATUS_CONFIRMED])
+            ->count();
+
+        return view('provider.services.index', compact('services', 'newOrdersCount'));
     }
 
     public function create()
@@ -40,12 +46,20 @@ class ProviderServiceController extends Controller
             'currency' => ['required', 'string', 'max:10'],
             'delivery_time_days' => ['nullable', 'integer', 'min:1'],
             'revisions' => ['nullable', 'integer', 'min:0'],
+            'thumbnail' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'gallery_images' => ['nullable', 'array', 'max:8'],
+            'gallery_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $validated['provider_user_id'] = auth()->id();
         $validated['slug'] = $this->generateUniqueSlug($validated['title']);
         $validated['is_active'] = $request->boolean('is_active');
+        $validated['thumbnail_path'] = $request->file('thumbnail')->store('services/thumbnails', 'public');
+        $validated['gallery_images'] = collect($request->file('gallery_images', []))
+            ->map(fn ($file) => $file->store('services/galleries', 'public'))
+            ->values()
+            ->all();
 
         ServiceListing::create($validated);
 
@@ -78,6 +92,11 @@ class ProviderServiceController extends Controller
             'currency' => ['required', 'string', 'max:10'],
             'delivery_time_days' => ['nullable', 'integer', 'min:1'],
             'revisions' => ['nullable', 'integer', 'min:0'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'gallery_images' => ['nullable', 'array', 'max:8'],
+            'gallery_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'keep_existing_gallery' => ['nullable', 'array'],
+            'keep_existing_gallery.*' => ['string'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -86,6 +105,33 @@ class ProviderServiceController extends Controller
             : $service->slug;
 
         $validated['is_active'] = $request->boolean('is_active');
+
+        if ($request->hasFile('thumbnail')) {
+            if ($service->thumbnail_path) {
+                Storage::disk('public')->delete($service->thumbnail_path);
+            }
+            $validated['thumbnail_path'] = $request->file('thumbnail')->store('services/thumbnails', 'public');
+        }
+
+        $existingGallery = collect($service->gallery_images ?? []);
+        $keptGallery = collect($request->input('keep_existing_gallery', []))
+            ->intersect($existingGallery)
+            ->values();
+
+        $removedGallery = $existingGallery->diff($keptGallery)->values();
+        foreach ($removedGallery as $removedPath) {
+            Storage::disk('public')->delete($removedPath);
+        }
+
+        $newGallery = collect($request->file('gallery_images', []))
+            ->map(fn ($file) => $file->store('services/galleries', 'public'))
+            ->values();
+
+        $validated['gallery_images'] = $keptGallery
+            ->concat($newGallery)
+            ->take(8)
+            ->values()
+            ->all();
 
         $service->update($validated);
 
@@ -97,6 +143,14 @@ class ProviderServiceController extends Controller
     public function destroy(ServiceListing $service)
     {
         abort_unless($service->provider_user_id === auth()->id(), 403);
+
+        if ($service->thumbnail_path) {
+            Storage::disk('public')->delete($service->thumbnail_path);
+        }
+
+        foreach (($service->gallery_images ?? []) as $galleryPath) {
+            Storage::disk('public')->delete($galleryPath);
+        }
 
         $service->delete();
 

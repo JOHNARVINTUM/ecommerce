@@ -55,4 +55,21 @@ class Order extends Model
     {
         return $this->belongsTo(ServiceListing::class, 'service_listing_id');
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_CONFIRMED => 'Confirmed',
+            self::STATUS_IN_PROGRESS => 'On Going',
+            self::STATUS_COMPLETED => 'Completed',
+            self::STATUS_CANCELLED => 'Cancelled',
+            default => ucfirst(str_replace('_', ' ', (string) $this->status)),
+        };
+    }
 }

@@ -44,7 +44,7 @@
                     <p><span class="font-semibold">Service:</span> {{ $order->serviceListing->title ?? 'N/A' }}</p>
                     <p><span class="font-semibold">Provider:</span> {{ $order->provider->name ?? 'N/A' }}</p>
                     <p><span class="font-semibold">Amount:</span> PHP {{ number_format($order->amount, 2) }}</p>
-                    <p><span class="font-semibold">Status:</span> {{ str_replace('_', ' ', ucfirst($order->status)) }}</p>
+                    <p><span class="font-semibold">Status:</span> {{ $order->status_label }}</p>
                     <p><span class="font-semibold">Payment Status:</span> {{ ucfirst($order->payment_status) }}</p>
                     <p><span class="font-semibold">Preferred Date:</span> {{ $order->scheduled_date ? $order->scheduled_date->format('M d, Y') : 'Not set' }}</p>
                     <p><span class="font-semibold">Preferred Time:</span> {{ $order->scheduled_time ?? 'Not set' }}</p>
