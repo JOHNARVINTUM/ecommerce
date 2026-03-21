@@ -13,13 +13,33 @@ class PayMongoService
 {
     public function createCheckoutSession(Order $order, array $urls): array
     {
+        $secretKey = (string) config('services.paymongo.secret_key');
+
+        if ($secretKey === '') {
+            throw new \RuntimeException('PayMongo secret key is missing.');
+        }
+
         $paymentMethods = config('services.paymongo.payment_methods', ['gcash']);
 
         if ($paymentMethods === []) {
             $paymentMethods = ['gcash'];
         }
 
-        $response = Http::withBasicAuth((string) config('services.paymongo.secret_key'), '')
+        $eligiblePaymentMethods = $this->getEligiblePaymentMethods($secretKey);
+
+        if ($eligiblePaymentMethods !== []) {
+            $filteredPaymentMethods = array_values(array_intersect($paymentMethods, $eligiblePaymentMethods));
+
+            if ($filteredPaymentMethods === []) {
+                throw new \RuntimeException(
+                    'Requested PayMongo payment methods are not enabled for this account. Enabled methods: '.implode(', ', $eligiblePaymentMethods)
+                );
+            }
+
+            $paymentMethods = $filteredPaymentMethods;
+        }
+
+        $response = Http::withBasicAuth($secretKey, '')
             ->acceptJson()
             ->post($this->endpoint('/checkout_sessions'), [
                 'data' => [
@@ -185,6 +205,48 @@ class PayMongoService
     private function endpoint(string $path): string
     {
         return rtrim((string) config('services.paymongo.base_url'), '/').'/'.ltrim($path, '/');
+    }
+
+    private function getEligiblePaymentMethods(string $secretKey): array
+    {
+        $response = Http::withBasicAuth($secretKey, '')
+            ->acceptJson()
+            ->get($this->endpoint('/merchants/capabilities/payment_methods'));
+
+        if (! $response->successful()) {
+            return [];
+        }
+
+        $methods = [];
+
+        foreach ($response->json('data', []) as $method) {
+            $status = strtolower((string) data_get($method, 'attributes.status', ''));
+            $isEnabled = (bool) data_get($method, 'attributes.enabled', false)
+                || (bool) data_get($method, 'attributes.available', false)
+                || in_array($status, ['enabled', 'active', 'available'], true);
+
+            if (! $isEnabled) {
+                continue;
+            }
+
+            $candidates = array_filter([
+                strtolower((string) data_get($method, 'id')),
+                strtolower((string) data_get($method, 'type')),
+                strtolower((string) data_get($method, 'attributes.code')),
+                strtolower((string) data_get($method, 'attributes.name')),
+                strtolower((string) data_get($method, 'attributes.payment_method_type')),
+            ]);
+
+            foreach ($candidates as $candidate) {
+                foreach (['gcash', 'maya', 'card', 'grab_pay', 'grabpay', 'shopeepay', 'billease', 'dob', 'qrph'] as $supportedMethod) {
+                    if (str_contains($candidate, $supportedMethod)) {
+                        $methods[] = $supportedMethod === 'grab_pay' ? 'grabpay' : $supportedMethod;
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($methods));
     }
 
     private function amountToMinorUnit(float|string $amount): int
