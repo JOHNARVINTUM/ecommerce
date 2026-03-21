@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
 use App\Http\Controllers\Admin\AdminPageController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -57,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/services/{service:slug}/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('/services/{service:slug}/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/orders/{order}/payments/paymongo', [PaymentController::class, 'start'])->name('payments.start');
+    Route::get('/payments/success', [PaymentController::class, 'success'])->name('payments.success');
+    Route::get('/payments/failed', [PaymentController::class, 'failed'])->name('payments.failed');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/{service:slug}', [CartController::class, 'store'])->name('cart.store');
     Route::patch('/cart/{service:slug}/quantity', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
@@ -112,5 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
 });
 });
+
+Route::post('/webhooks/paymongo', [PaymentController::class, 'webhook'])->name('webhooks.paymongo');
 
 require __DIR__.'/auth.php';

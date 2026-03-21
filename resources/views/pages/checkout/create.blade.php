@@ -77,7 +77,7 @@
                     <p class="text-xs uppercase tracking-[0.28em] text-white/45">Checkout</p>
                     <h1 class="mt-2 text-3xl font-semibold text-white sm:text-4xl">Pay for {{ $service->title }}</h1>
                     <p class="mt-3 max-w-2xl text-sm leading-6 text-white/65">
-                        This checkout uses your provided PayMongo hosted checkout URL as a demo payment step. The PayMongo page opens in a new tab, then this form records the order as paid for simulation purposes.
+                        This checkout creates your order first, then redirects you to PayMongo Hosted Checkout to complete payment securely.
                     </p>
                 </div>
 
@@ -161,83 +161,25 @@
                             <p class="text-xs uppercase tracking-[0.24em] text-white/45">Payment Method</p>
 
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <label class="flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 p-3 text-white/90">
-                                    <input type="radio" name="payment_method" value="gcash_demo" @checked(old('payment_method') === 'gcash_demo')>
-                                    <span class="text-sm font-medium">Gcash</span>
-                                </label>
-                                <label class="flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 p-3 text-white/90">
-                                    <input type="radio" name="payment_method" value="maya_demo" @checked(old('payment_method', 'gcash_demo') === 'maya_demo')>
-                                    <span class="text-sm font-medium">Maya</span>
-                                </label>
+                                @foreach ($paymongoPaymentMethods as $method)
+                                    <div class="rounded-xl border border-white/20 bg-white/5 p-4 text-white/90">
+                                        <p class="text-sm font-semibold">{{ strtoupper($method) }}</p>
+                                        <p class="mt-1 text-sm text-white/65">
+                                            You will be redirected to PayMongo Hosted Checkout to finish your payment.
+                                        </p>
+                                    </div>
+                                @endforeach
                             </div>
 
-                            <div id="billing-details" class="hidden rounded-xl border border-white/20 bg-white/5 p-4">
-                                <h3 class="text-sm font-semibold text-white">Billing Details</h3>
-                                <p class="mt-2 text-sm text-white/65">Please enter any billing notes or payment reference here.</p>
-
-                                <div class="mt-3 grid gap-3 md:grid-cols-2">
-                                    <div>
-                                        <label for="billing_name" class="mb-2 block text-sm font-medium text-white/85">Billing Name</label>
-                                        <input type="text" name="billing_name" id="billing_name" value="{{ old('billing_name', auth()->user()->name) }}" class="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/45 focus:border-white/35 focus:ring-white/20">
-                                    </div>
-                                    <div>
-                                        <label for="billing_phone" class="mb-2 block text-sm font-medium text-white/85">Billing Phone</label>
-                                        <input type="text" name="billing_phone" id="billing_phone" value="{{ old('billing_phone', auth()->user()->phone ?? '') }}" class="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/45 focus:border-white/35 focus:ring-white/20">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label for="billing_address" class="mb-2 block text-sm font-medium text-white/85">Billing Address</label>
-                                        <input type="text" name="billing_address" id="billing_address" value="{{ old('billing_address', auth()->user()->profile->location ?? '') }}" class="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/45 focus:border-white/35 focus:ring-white/20">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="simulation-instruction" class="rounded-xl border border-amber-300/35 bg-amber-300/10 p-4 text-sm text-amber-100">
-                                Select a payment method to see instructions and complete the simulator flow.
+                            <div class="rounded-xl border border-amber-300/35 bg-amber-300/10 p-4 text-sm text-amber-100">
+                                Clicking continue creates your order with an unpaid status first. Your order is only marked paid after PayMongo confirms the payment by redirect and webhook.
                             </div>
                         </div>
-
-                        <label class="mt-5 flex items-start gap-3 rounded-xl border border-white/20 bg-white/5 p-4 text-sm text-white/85">
-                            <input type="checkbox" name="simulate_payment_confirmation" value="1" @checked(old('simulate_payment_confirmation')) class="mt-1 rounded border-white/35 bg-transparent text-indigo-400 focus:ring-indigo-300/50">
-                            <span>
-                                I completed the selected payment simulator and I want this order recorded as paid for simulation purposes.
-                            </span>
-                        </label>
-                        @error('simulate_payment_confirmation')
-                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
-
-                        <script>
-                            function updateSimulatorInfo() {
-                                const method = document.querySelector('input[name="payment_method"]:checked')?.value;
-                                const billingDetails = document.getElementById('billing-details');
-                                const simInstr = document.getElementById('simulation-instruction');
-
-                                if (!method) {
-                                    billingDetails.classList.add('hidden');
-                                    simInstr.textContent = 'Please choose a payment method to continue.';
-                                    return;
-                                }
-
-                                billingDetails.classList.remove('hidden');
-
-                                if (method === 'gcash_demo') {
-                                    simInstr.innerHTML = 'Use <strong>Gcash</strong> simulator by sending to number <strong>09171112222</strong>. After completing, come back and check the box below.';
-                                } else {
-                                    simInstr.innerHTML = 'Use <strong>Maya</strong> simulator by sending to number <strong>09181113333</strong>. After completing, come back and check the box below.';
-                                }
-                            }
-
-                            document.querySelectorAll('input[name="payment_method"]').forEach(el => {
-                                el.addEventListener('change', updateSimulatorInfo);
-                            });
-
-                            updateSimulatorInfo();
-                        </script>
 
                     <div class="flex flex-col gap-3 sm:flex-row">
                             <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-8 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
-                                Simulate Payment And Place Order
+                                Continue To PayMongo
                             </button>
 
                             <a href="{{ route('services.show', $service->slug) }}" class="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/5 px-8 py-3 text-sm font-semibold text-white/90 transition hover:border-white/35 hover:bg-white/10">
