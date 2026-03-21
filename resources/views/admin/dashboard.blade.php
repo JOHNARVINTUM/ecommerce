@@ -26,41 +26,26 @@
     <div class="mt-8 grid gap-6 lg:grid-cols-3">
         <div
             class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2"
-            x-data="ordersOverviewChart(@js($orderChartData), @js($statusOrder), @js($statusLabels))"
+            x-data="window.ordersOverviewChart(@js($orderChartData), @js($statusOrder), @js($statusLabels))"
         >
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <h3 class="text-lg font-semibold text-slate-900">Orders Overview</h3>
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="inline-flex overflow-hidden rounded-lg border border-slate-200">
-                        <button type="button" class="px-3 py-2 text-xs font-semibold"
-                            :class="selectedRange === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
-                            @click="selectedRange = 'all'">
-                            All Time
-                        </button>
-                        <button type="button" class="border-l border-slate-200 px-3 py-2 text-xs font-semibold"
-                            :class="selectedRange === '30d' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
-                            @click="selectedRange = '30d'">
-                            30 Days
-                        </button>
-                        <button type="button" class="border-l border-slate-200 px-3 py-2 text-xs font-semibold"
-                            :class="selectedRange === '7d' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
-                            @click="selectedRange = '7d'">
-                            7 Days
-                        </button>
-                    </div>
-
-                    <div class="inline-flex overflow-hidden rounded-lg border border-slate-200">
-                        <button type="button" class="px-3 py-2 text-xs font-semibold"
-                            :class="chartType === 'bar' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700'"
-                            @click="chartType = 'bar'">
-                            Bar
-                        </button>
-                        <button type="button" class="border-l border-slate-200 px-3 py-2 text-xs font-semibold"
-                            :class="chartType === 'line' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700'"
-                            @click="chartType = 'line'">
-                            Line
-                        </button>
-                    </div>
+                <div class="inline-flex overflow-hidden rounded-lg border border-slate-200">
+                    <button type="button" class="px-3 py-2 text-xs font-semibold"
+                        :class="selectedRange === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
+                        @click="selectedRange = 'all'">
+                        All Time
+                    </button>
+                    <button type="button" class="border-l border-slate-200 px-3 py-2 text-xs font-semibold"
+                        :class="selectedRange === 'month' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
+                        @click="selectedRange = 'month'">
+                        This Month
+                    </button>
+                    <button type="button" class="border-l border-slate-200 px-3 py-2 text-xs font-semibold"
+                        :class="selectedRange === '7d' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
+                        @click="selectedRange = '7d'">
+                        7 Days
+                    </button>
                 </div>
             </div>
 
@@ -79,8 +64,24 @@
                 </div>
             </div>
 
-            <div class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <svg viewBox="0 0 640 280" class="h-64 w-full">
+            <div class="relative mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                    <p class="text-sm font-semibold text-slate-900" x-text="current.series_label"></p>
+                    <p class="text-xs text-slate-500" x-text="rangeDescription()"></p>
+                </div>
+
+                <div
+                    x-show="hoveredPoint"
+                    x-cloak
+                    class="pointer-events-none absolute z-10 w-28 rounded-lg bg-slate-950 px-3 py-2 text-white shadow-lg"
+                    :style="`left: ${tooltipX()}px; top: ${tooltipY()}px;`"
+                >
+                    <p class="text-[10px] font-medium text-slate-300" x-text="hoveredPoint ? hoveredPoint.label : ''"></p>
+                    <p class="mt-1 text-xs font-semibold" x-text="hoveredPoint ? `${hoveredPoint.value} orders` : ''"></p>
+                </div>
+
+                <svg viewBox="0 0 640 280" class="h-64 w-full" @mouseleave="clearHover()">
+                    <text x="22" y="18" class="fill-slate-500 text-[10px] font-semibold">Y: Orders</text>
                     <line x1="50" y1="20" x2="50" y2="240" stroke="#cbd5e1" stroke-width="1" />
                     <line x1="50" y1="240" x2="610" y2="240" stroke="#cbd5e1" stroke-width="1" />
 
@@ -91,36 +92,52 @@
                         </g>
                     </template>
 
-                    <g x-show="chartType === 'bar'">
-                            <template x-for="(status, index) in statusOrder" :key="status">
-                                <g>
-                                    <rect
-                                        :x="xPos(index) - 22"
-                                        :y="yPos(value(status))"
-                                        width="44"
-                                        :height="240 - yPos(value(status))"
-                                        rx="4"
-                                        fill="#334155"
-                                    ></rect>
-                                    <text :x="xPos(index)" :y="yPos(value(status)) - 8" text-anchor="middle" class="fill-slate-700 text-[10px] font-semibold" x-text="value(status)"></text>
-                                </g>
-                            </template>
-                    </g>
-
-                    <g x-show="chartType === 'line'">
-                            <polyline :points="linePoints()" fill="none" stroke="#1d4ed8" stroke-width="3"></polyline>
-                            <template x-for="(status, index) in statusOrder" :key="status + '-dot'">
-                                <g>
-                                    <circle :cx="xPos(index)" :cy="yPos(value(status))" r="4" fill="#1d4ed8"></circle>
-                                    <text :x="xPos(index)" :y="yPos(value(status)) - 10" text-anchor="middle" class="fill-slate-700 text-[10px] font-semibold" x-text="value(status)"></text>
-                                </g>
-                            </template>
-                    </g>
+                    <polyline :points="linePoints()" fill="none" stroke="#1d4ed8" stroke-width="3"></polyline>
+                    <template x-for="(point, index) in current.values" :key="'dot-' + index">
+                        <g>
+                            <rect
+                                :x="bandStart(index)"
+                                y="20"
+                                :width="bandWidth()"
+                                height="220"
+                                fill="transparent"
+                                @mouseenter="setHover(index)"
+                            ></rect>
+                            <line
+                                :x1="xPos(index)"
+                                :x2="xPos(index)"
+                                y1="20"
+                                y2="240"
+                                :stroke="hoveredIndex === index ? '#bfdbfe' : 'transparent'"
+                                stroke-width="1"
+                            ></line>
+                            <circle
+                                :cx="xPos(index)"
+                                :cy="yPos(point)"
+                                :r="hoveredIndex === index ? 6 : 4"
+                                fill="#1d4ed8"
+                                @mouseenter="setHover(index)"
+                            ></circle>
+                            <circle
+                                :cx="xPos(index)"
+                                :cy="yPos(point)"
+                                r="16"
+                                fill="transparent"
+                                @mouseenter="setHover(index)"
+                            ></circle>
+                            <text :x="xPos(index)" :y="yPos(point) - 10" text-anchor="middle" class="fill-slate-700 text-[10px] font-semibold" x-text="point"></text>
+                        </g>
+                    </template>
                 </svg>
 
-                <div class="mt-2 grid grid-cols-5 gap-2 text-center">
-                    <template x-for="(status, index) in statusOrder" :key="status + '-label'">
-                        <p class="text-xs font-medium text-slate-600" x-text="statusLabels[status]"></p>
+                <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                    <span class="font-semibold">X: <span x-text="xAxisLabel()"></span></span>
+                    <span>Y: Number of orders</span>
+                </div>
+
+                <div class="mt-2" :class="labelGridClass()">
+                    <template x-for="(label, index) in current.labels" :key="'label-' + index">
+                        <p class="text-center text-xs font-medium text-slate-600" x-text="label"></p>
                     </template>
                 </div>
             </div>
@@ -169,38 +186,4 @@
             @endforelse
         </div>
     </div>
-
-    <script>
-        function ordersOverviewChart(orderChartData, statusOrder, statusLabels) {
-            return {
-                orderChartData,
-                statusOrder,
-                statusLabels,
-                selectedRange: 'all',
-                chartType: 'bar',
-                get current() {
-                    return this.orderChartData[this.selectedRange] ?? this.orderChartData.all;
-                },
-                value(status) {
-                    return this.current?.status_counts?.[status] ?? 0;
-                },
-                xPos(index) {
-                    const count = this.statusOrder.length || 1;
-                    const width = 560;
-                    const step = width / count;
-                    return 50 + (step * index) + (step / 2);
-                },
-                yPos(value) {
-                    const max = this.current?.max_count ?? 1;
-                    const ratio = max > 0 ? (value / max) : 0;
-                    return 240 - (ratio * 220);
-                },
-                linePoints() {
-                    return this.statusOrder
-                        .map((status, index) => `${this.xPos(index)},${this.yPos(this.value(status))}`)
-                        .join(' ');
-                },
-            };
-        }
-    </script>
 @endsection
