@@ -13,163 +13,209 @@
 @endphp
 
 @section('content')
-    <div class="w-full overflow-x-hidden bg-[#ecece9] text-[#111111]">
-        <header class="bg-[#141414]">
-            <div class="flex w-full items-center justify-between px-4 py-4 sm:px-8 sm:py-5 lg:px-10">
-                <a href="{{ route('home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-5xl">
+    <style>
+        .home-reveal {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+        }
+        .home-reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+        .home-card {
+            transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease, border-color .35s ease;
+        }
+        .home-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(167, 139, 250, .42);
+            box-shadow: 0 24px 46px rgba(2, 6, 23, .35);
+        }
+        .home-card:hover img {
+            transform: scale(1.05);
+        }
+        .home-card img {
+            transition: transform .5s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .ticker-track {
+            animation: ticker 26s linear infinite;
+        }
+        .ticker-track:hover {
+            animation-play-state: paused;
+        }
+    </style>
+
+    <div class="w-full overflow-x-hidden bg-[#0d0e13] text-white">
+        <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0d0e13]/90 backdrop-blur-md">
+            <div class="flex w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+                <a href="{{ route('home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">
                     LIMAX
                 </a>
-                <a href="{{ route('login') }}" class="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black sm:px-5 sm:py-3 sm:text-base">
-                    Sign in
+                <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90 sm:px-5 sm:py-2 sm:text-sm">
+                    Sign up
                 </a>
             </div>
         </header>
 
-        <section class="w-full">
-            <div class="relative overflow-hidden bg-black">
-                <img src="{{ $heroImage }}" alt="Hero background" class="h-[460px] w-full object-cover sm:h-[620px] lg:h-[700px]">
-                <div class="absolute inset-0 bg-black/35"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-6">
-                    <h1 class="max-w-[95vw] text-[clamp(2rem,7vw,5.5rem)] font-bold leading-[1.05] text-white">
-                        You bring the idea, we'll<br>take it from here
-                    </h1>
-                    <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4">
-                        <a href="{{ route('login') }}" class="rounded-2xl bg-white px-5 py-2.5 text-lg font-medium text-black sm:px-7 sm:py-3 sm:text-2xl">
-                            Log In
-                        </a>
-                        <a href="{{ route('register') }}" class="rounded-2xl bg-black px-5 py-2.5 text-lg font-medium text-white sm:px-7 sm:py-3 sm:text-2xl">
-                            Sign up
-                        </a>
-                    </div>
+        <section class="relative isolate overflow-hidden border-b border-white/5 bg-black">
+            <div class="absolute -left-24 top-10 h-80 w-80 rounded-full bg-violet-600/30 blur-[110px]"></div>
+            <div class="absolute right-0 top-16 h-72 w-72 rounded-full bg-indigo-500/25 blur-[100px]"></div>
+            <img src="{{ $heroImage }}" alt="Hero background" class="h-[560px] w-full object-cover opacity-35 sm:h-[680px] lg:h-[760px]">
+            <div class="absolute inset-0 bg-gradient-to-b from-[#0d0e13]/20 via-[#0d0e13]/60 to-[#0d0e13]"></div>
+            <div class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center sm:px-6">
+                <p class="home-reveal mb-5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-white/55">
+                    Technology-driven freelancing
+                </p>
+                <h1 class="home-reveal max-w-[95vw] text-[clamp(2.6rem,7vw,6.2rem)] font-black leading-[1.02] tracking-tight text-white">
+                    You bring the idea, we'll<br>take it from here
+                </h1>
+                <div class="home-reveal mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4">
+                    <a href="{{ route('login') }}" class="rounded-full bg-white px-6 py-3 text-base font-bold text-black transition hover:bg-white/90 sm:px-7 sm:text-lg">
+                        Log In
+                    </a>
+                    <a href="{{ route('register') }}" class="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-base font-bold text-white transition hover:bg-white/10 sm:px-7 sm:text-lg">
+                        Sign up
+                    </a>
                 </div>
             </div>
         </section>
 
-        <section class="mt-5 w-full px-3 sm:px-6 lg:px-8">
-            <div class="w-full rounded-sm bg-[#f8f8f6] p-4 sm:p-6">
-                <h2 class="mb-4 text-2xl font-bold text-[#101010] sm:text-3xl">Popular services</h2>
-                <div class="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
-                    @foreach ($stripImages as $index => $image)
-                        @php
-                            $service = $featuredServices->get($index);
-                        @endphp
-                        <a href="{{ $service ? route('services.show', $service) : route('services.index') }}" class="group block min-w-0 overflow-hidden rounded bg-black">
-                            <img src="{{ $image }}" alt="Service visual" class="h-36 w-full object-cover transition duration-300 group-hover:scale-105 sm:h-48 md:h-56">
-                        </a>
-                    @endforeach
-                </div>
+        <div class="overflow-hidden border-b border-white/5 bg-white/[0.03] py-4 text-xs font-medium uppercase tracking-[0.24em] text-white/25">
+            <div class="ticker-track flex w-max gap-16">
+                @foreach (range(0,1) as $_)
+                    <span>Programming</span><span>·</span>
+                    <span>Web Design</span><span>·</span>
+                    <span>Graphic Design</span><span>·</span>
+                    <span>Video Editing</span><span>·</span>
+                    <span>Digital Services</span><span>·</span>
+                    <span>IT Experts</span><span>·</span>
+                @endforeach
             </div>
-        </section>
+        </div>
 
-        <section class="mt-5 w-full bg-[#212327] px-6 py-12 text-white sm:px-10 sm:py-14 lg:px-12">
-            <p class="text-[20px] text-slate-200">This is the future of IT freelancing.</p>
-            <h2 class="mt-3 max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">The next generation technology freelancing platform.</h2>
-            <p class="mt-6 max-w-5xl text-base leading-7 text-slate-300 sm:text-lg">
-                LIMAX is a fast, reliable, and secure freelancing platform built exclusively for IT and digital services. We connect businesses with skilled
-                professionals in programming, web design, graphic design, video editing, and other technology-driven fields. Every project is handled by
-                verified freelancers who focus on quality, efficiency, and results. Whether you're building software, designing a website, or creating
-                digital content, LIMAX helps you turn ideas into real solutions without the complexity.
-            </p>
-        </section>
-
-        <section class="w-full space-y-8 bg-[#ecece9] px-6 py-10 sm:px-10 lg:px-12">
-            <div class="grid items-center gap-8 md:grid-cols-2">
+        <section class="mx-auto mt-0 w-full max-w-[1440px] px-5 py-14 sm:px-6 lg:px-8 lg:py-18">
+            <div class="home-reveal mb-7 flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <h3 class="text-5xl font-bold leading-tight text-[#111] sm:text-6xl">Need help with Vibe coding?</h3>
-                    <p class="mt-6 max-w-xl text-lg text-[#555] sm:text-xl">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-white/40">Featured</p>
+                    <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Popular services</h2>
+                </div>
+                <a href="{{ route('login') }}" class="rounded-full border border-white/15 bg-white/[0.03] px-5 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white">
+                    View Services
+                </a>
+            </div>
+
+            <div class="grid w-full grid-cols-2 gap-3 md:grid-cols-4">
+                @foreach ($stripImages as $index => $image)
+                    @php
+                        $service = $featuredServices->get($index);
+                    @endphp
+                    <a href="{{ route('login') }}" class="home-card home-reveal group block min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+                        <img src="{{ $image }}" alt="Service visual" class="h-40 w-full object-cover sm:h-52 md:h-64">
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="border-y border-white/5 bg-[#151820] px-6 py-14 text-white sm:px-10 sm:py-16 lg:px-12">
+            <div class="mx-auto max-w-[1440px]">
+                <p class="home-reveal text-[20px] text-slate-200">This is the future of IT freelancing.</p>
+                <h2 class="home-reveal mt-3 max-w-4xl text-4xl font-black leading-tight sm:text-6xl">The next generation technology freelancing platform.</h2>
+                <p class="home-reveal mt-6 max-w-5xl text-base leading-7 text-slate-300 sm:text-lg">
+                    LIMAX is a fast, reliable, and secure freelancing platform built exclusively for IT and digital services. We connect businesses with skilled
+                    professionals in programming, web design, graphic design, video editing, and other technology-driven fields. Every project is handled by
+                    verified freelancers who focus on quality, efficiency, and results. Whether you're building software, designing a website, or creating
+                    digital content, LIMAX helps you turn ideas into real solutions without the complexity.
+                </p>
+            </div>
+        </section>
+
+        <section class="mx-auto w-full max-w-[1440px] space-y-8 px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
+            <div class="grid items-center gap-8 md:grid-cols-2">
+                <div class="home-reveal">
+                    <h3 class="text-5xl font-black leading-tight text-white sm:text-6xl">Need help with Vibe coding?</h3>
+                    <p class="mt-6 max-w-xl text-lg text-white/60 sm:text-xl">
                         Get matched with the right expert to keep building and marketing your project
                     </p>
-                    <a href="{{ route('services.index') }}" class="mt-8 inline-block rounded-xl bg-black px-7 py-4 text-lg font-semibold text-white">
+                    <a href="{{ route('login') }}" class="mt-8 inline-block rounded-full bg-white px-7 py-4 text-lg font-semibold text-black transition hover:bg-white/90">
                         Find an Expert
                     </a>
                 </div>
-                <div class="overflow-hidden rounded-2xl">
-                    <img src="{{ $helpImageA }}" alt="Coding support" class="h-[260px] w-full object-cover sm:h-[360px] md:h-[420px]">
+                <div class="home-card home-reveal overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-3">
+                    <img src="{{ $helpImageA }}" alt="Coding support" class="h-[260px] w-full rounded-[1.4rem] object-cover sm:h-[360px] md:h-[420px]">
                 </div>
             </div>
 
             <div class="grid items-center gap-8 md:grid-cols-2">
-                <div class="order-2 md:order-1 overflow-hidden rounded-2xl">
-                    <img src="{{ $helpImageB }}" alt="Design support" class="h-[260px] w-full object-cover sm:h-[360px] md:h-[420px]">
+                <div class="home-card home-reveal order-2 md:order-1 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-3">
+                    <img src="{{ $helpImageB }}" alt="Design support" class="h-[260px] w-full rounded-[1.4rem] object-cover sm:h-[360px] md:h-[420px]">
                 </div>
-                <div class="order-1 md:order-2">
-                    <h3 class="text-5xl font-bold leading-tight text-[#111] sm:text-6xl">Looking for help designing your website?</h3>
-                    <p class="mt-6 max-w-xl text-lg text-[#555] sm:text-xl">
+                <div class="home-reveal order-1 md:order-2">
+                    <h3 class="text-5xl font-black leading-tight text-white sm:text-6xl">Looking for help designing your website?</h3>
+                    <p class="mt-6 max-w-xl text-lg text-white/60 sm:text-xl">
                         Work with experienced designers who create modern, responsive websites tailored to your goals.
                     </p>
-                    <a href="{{ route('services.index') }}" class="mt-8 inline-block rounded-xl bg-black px-7 py-4 text-lg font-semibold text-white">
+                    <a href="{{ route('login') }}" class="mt-8 inline-block rounded-full bg-white px-7 py-4 text-lg font-semibold text-black transition hover:bg-white/90">
                         Find an Expert
                     </a>
                 </div>
             </div>
         </section>
 
-        <section class="w-full bg-[#212327] px-6 py-10 text-white sm:px-10 sm:py-12 lg:px-12">
-            <h2 class="text-5xl font-bold leading-tight sm:text-6xl">This is why Customers Love us</h2>
-            <p class="mt-3 text-lg text-slate-300">Here's what people are saying</p>
+        <section class="bg-[#151820] px-6 py-12 text-white sm:px-10 sm:py-14 lg:px-12">
+            <div class="mx-auto max-w-[1440px]">
+                <h2 class="home-reveal text-5xl font-black leading-tight sm:text-6xl">This is why Customers Love us</h2>
+                <p class="home-reveal mt-3 text-lg text-slate-300">Here's what people are saying</p>
 
-            <div class="mt-8 grid gap-4 md:grid-cols-3">
-                <article class="rounded-2xl bg-white p-6 text-[#121212]">
-                    <p class="text-lg leading-7">The logo making was fast and innovative and deserves a 5 star</p>
-                    <div class="mt-10">
-                        <p class="text-sm font-semibold">Dale Warren Hurst</p>
-                        <p class="text-sm text-[#666]">Logo Making Service</p>
-                    </div>
-                </article>
-                <article class="rounded-2xl bg-white p-6 text-[#121212]">
-                    <p class="text-lg leading-7">Very friendly, fast, and a good!</p>
-                    <div class="mt-10">
-                        <p class="text-sm font-semibold">Godwin Ablao</p>
-                        <p class="text-sm text-[#666]">Programming Service</p>
-                    </div>
-                </article>
-                <article class="rounded-2xl bg-white p-6 text-[#121212]">
-                    <p class="text-lg leading-7">really kind, fast service. Recommend</p>
-                    <div class="mt-10">
-                        <p class="text-sm font-semibold">Jake Chavenia</p>
-                        <p class="text-sm text-[#666]">Video Editing Service</p>
-                    </div>
-                </article>
+                <div class="mt-8 grid gap-4 md:grid-cols-3">
+                    <article class="home-card home-reveal rounded-2xl border border-white/10 bg-white p-6 text-[#121212]">
+                        <p class="text-lg leading-7">The logo making was fast and innovative and deserves a 5 star</p>
+                        <div class="mt-10">
+                            <p class="text-sm font-semibold">Dale Warren Hurst</p>
+                            <p class="text-sm text-[#666]">Logo Making Service</p>
+                        </div>
+                    </article>
+                    <article class="home-card home-reveal rounded-2xl border border-white/10 bg-white p-6 text-[#121212]">
+                        <p class="text-lg leading-7">Very friendly, fast, and a good!</p>
+                        <div class="mt-10">
+                            <p class="text-sm font-semibold">Godwin Ablao</p>
+                            <p class="text-sm text-[#666]">Programming Service</p>
+                        </div>
+                    </article>
+                    <article class="home-card home-reveal rounded-2xl border border-white/10 bg-white p-6 text-[#121212]">
+                        <p class="text-lg leading-7">really kind, fast service. Recommend</p>
+                        <div class="mt-10">
+                            <p class="text-sm font-semibold">Jake Chavenia</p>
+                            <p class="text-sm text-[#666]">Video Editing Service</p>
+                        </div>
+                    </article>
+                </div>
             </div>
         </section>
 
-        <footer class="w-full bg-[#ecece9] px-6 py-10 sm:px-10 lg:px-12">
-            <div class="grid gap-8 text-sm text-[#2f2f2f] md:grid-cols-5">
-                <div class="md:col-span-2">
-                    <p class="text-lg font-black tracking-tight text-[#141414]">LIMAX</p>
-                    <p class="mt-3 max-w-2xl text-base leading-7 text-[#555]">
-                        LIMAX is a technology-focused freelancing platform built for businesses and creators who need reliable IT expertise.
-                        We connect clients with skilled professionals in programming, web design, graphic design, video editing, and other
-                        digital services. Every project is handled with quality, transparency, and care so you can focus on your goals while
-                        we connect you with the right talent.
-                    </p>
-                </div>
-                <div>
-                    <p class="text-base font-bold text-[#141414]">Features</p>
-                    <ul class="mt-3 space-y-2 text-base">
-                        <li><a href="{{ route('services.index') }}" class="hover:text-black">Core features</a></li>
-                        <li><a href="{{ route('services.index') }}" class="hover:text-black">Pro experience</a></li>
-                        <li><a href="{{ route('services.index') }}" class="hover:text-black">Integrations</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <p class="text-base font-bold text-[#141414]">Learn more</p>
-                    <ul class="mt-3 space-y-2 text-base">
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Blog</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Case studies</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Customer stories</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Best practices</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <p class="text-base font-bold text-[#141414]">Support</p>
-                    <ul class="mt-3 space-y-2 text-base">
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Contact</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Support</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-black">Legal</a></li>
-                    </ul>
-                </div>
-            </div>
-        </footer>
+        <x-auth-footer />
     </div>
+
+    <script>
+        (() => {
+            const nodes = document.querySelectorAll('.home-reveal');
+            if (!nodes.length) {
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+
+            nodes.forEach((node) => observer.observe(node));
+        })();
+    </script>
 @endsection

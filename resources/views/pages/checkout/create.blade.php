@@ -2,19 +2,19 @@
 
 @section('content')
 <div class="flex min-h-screen w-full flex-col overflow-x-hidden bg-[#f2f1eb] text-[#111]">
-    <header class="bg-[#1f2024]">
-        <div class="flex w-full items-center justify-between px-4 py-4 sm:px-8 lg:px-10">
+    <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0d0e13]/90 backdrop-blur-md">
+        <div class="flex w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <a href="{{ route('user.home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">
                 LIMAX
             </a>
 
-            <nav class="flex items-center gap-3 text-[11px] text-white sm:gap-8 sm:text-sm">
-                <a href="{{ route('services.index') }}" class="hover:text-slate-300">Services</a>
-                <a href="{{ route('about') }}" class="hover:text-slate-300">About Us</a>
-                <a href="{{ route('orders.index') }}" class="hover:text-slate-300">My Orders</a>
+            <nav class="flex items-center gap-3 text-[11px] text-white/85 sm:gap-8 sm:text-sm">
+                <a href="{{ route('services.index') }}" class="transition hover:text-white">Services</a>
+                <a href="{{ route('about') }}" class="transition hover:text-white">About Us</a>
+                <a href="{{ route('orders.index') }}" class="transition hover:text-white">My Orders</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="rounded-xl bg-white px-4 py-2 font-semibold text-black">Log out</button>
+                    <button type="submit" class="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">Log out</button>
                 </form>
             </nav>
         </div>
@@ -189,6 +189,5 @@
         </div>
     </section>
 
-    <x-auth-footer />
 </div>
 @endsection

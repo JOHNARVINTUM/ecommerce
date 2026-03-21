@@ -56,6 +56,7 @@ class CartController extends Controller
             'slug' => $service->slug,
             'title' => $service->title,
             'provider_name' => $service->provider->name ?? 'Provider',
+            'thumbnail_url' => $service->thumbnail_url,
             'unit_price' => (float) $service->price,
             'currency' => $service->currency ?: 'PHP',
             'quantity' => $quantity,

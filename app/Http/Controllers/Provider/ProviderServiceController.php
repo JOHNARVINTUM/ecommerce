@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\ServiceCategory;
 use App\Models\ServiceListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -37,6 +38,9 @@ class ProviderServiceController extends Controller
 
     public function store(Request $request)
     {
+        $hasThumbnailPath = Schema::hasColumn('service_listings', 'thumbnail_path');
+        $hasGalleryImages = Schema::hasColumn('service_listings', 'gallery_images');
+
         $validated = $request->validate([
             'service_category_id' => ['required', 'exists:service_categories,id'],
             'title' => ['required', 'string', 'max:255'],
@@ -55,11 +59,21 @@ class ProviderServiceController extends Controller
         $validated['provider_user_id'] = auth()->id();
         $validated['slug'] = $this->generateUniqueSlug($validated['title']);
         $validated['is_active'] = $request->boolean('is_active');
-        $validated['thumbnail_path'] = $request->file('thumbnail')->store('services/thumbnails', 'public');
-        $validated['gallery_images'] = collect($request->file('gallery_images', []))
-            ->map(fn ($file) => $file->store('services/galleries', 'public'))
-            ->values()
-            ->all();
+
+        if ($hasThumbnailPath && $request->hasFile('thumbnail')) {
+            $validated['thumbnail_path'] = $request->file('thumbnail')->store('services/thumbnails', 'public');
+        } else {
+            unset($validated['thumbnail_path']);
+        }
+
+        if ($hasGalleryImages) {
+            $validated['gallery_images'] = collect($request->file('gallery_images', []))
+                ->map(fn ($file) => $file->store('services/galleries', 'public'))
+                ->values()
+                ->all();
+        } else {
+            unset($validated['gallery_images']);
+        }
 
         ServiceListing::create($validated);
 
@@ -82,6 +96,9 @@ class ProviderServiceController extends Controller
     public function update(Request $request, ServiceListing $service)
     {
         abort_unless($service->provider_user_id === auth()->id(), 403);
+
+        $hasThumbnailPath = Schema::hasColumn('service_listings', 'thumbnail_path');
+        $hasGalleryImages = Schema::hasColumn('service_listings', 'gallery_images');
 
         $validated = $request->validate([
             'service_category_id' => ['required', 'exists:service_categories,id'],
@@ -106,32 +123,36 @@ class ProviderServiceController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
 
-        if ($request->hasFile('thumbnail')) {
+        if ($hasThumbnailPath && $request->hasFile('thumbnail')) {
             if ($service->thumbnail_path) {
                 Storage::disk('public')->delete($service->thumbnail_path);
             }
             $validated['thumbnail_path'] = $request->file('thumbnail')->store('services/thumbnails', 'public');
         }
 
-        $existingGallery = collect($service->gallery_images ?? []);
-        $keptGallery = collect($request->input('keep_existing_gallery', []))
-            ->intersect($existingGallery)
-            ->values();
+        if ($hasGalleryImages) {
+            $existingGallery = collect($service->gallery_images ?? []);
+            $keptGallery = collect($request->input('keep_existing_gallery', []))
+                ->intersect($existingGallery)
+                ->values();
 
-        $removedGallery = $existingGallery->diff($keptGallery)->values();
-        foreach ($removedGallery as $removedPath) {
-            Storage::disk('public')->delete($removedPath);
+            $removedGallery = $existingGallery->diff($keptGallery)->values();
+            foreach ($removedGallery as $removedPath) {
+                Storage::disk('public')->delete($removedPath);
+            }
+
+            $newGallery = collect($request->file('gallery_images', []))
+                ->map(fn ($file) => $file->store('services/galleries', 'public'))
+                ->values();
+
+            $validated['gallery_images'] = $keptGallery
+                ->concat($newGallery)
+                ->take(8)
+                ->values()
+                ->all();
+        } else {
+            unset($validated['gallery_images']);
         }
-
-        $newGallery = collect($request->file('gallery_images', []))
-            ->map(fn ($file) => $file->store('services/galleries', 'public'))
-            ->values();
-
-        $validated['gallery_images'] = $keptGallery
-            ->concat($newGallery)
-            ->take(8)
-            ->values()
-            ->all();
 
         $service->update($validated);
 
@@ -144,12 +165,17 @@ class ProviderServiceController extends Controller
     {
         abort_unless($service->provider_user_id === auth()->id(), 403);
 
-        if ($service->thumbnail_path) {
+        $hasThumbnailPath = Schema::hasColumn('service_listings', 'thumbnail_path');
+        $hasGalleryImages = Schema::hasColumn('service_listings', 'gallery_images');
+
+        if ($hasThumbnailPath && $service->thumbnail_path) {
             Storage::disk('public')->delete($service->thumbnail_path);
         }
 
-        foreach (($service->gallery_images ?? []) as $galleryPath) {
-            Storage::disk('public')->delete($galleryPath);
+        if ($hasGalleryImages) {
+            foreach (($service->gallery_images ?? []) as $galleryPath) {
+                Storage::disk('public')->delete($galleryPath);
+            }
         }
 
         $service->delete();
