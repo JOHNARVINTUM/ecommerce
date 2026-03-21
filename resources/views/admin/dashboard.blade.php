@@ -2,35 +2,35 @@
 
 @section('content')
     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm text-slate-500">Completed Orders</p>
-            <h2 class="mt-3 text-3xl font-bold text-slate-900">{{ $successfulProjects }}</h2>
+        <div class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
+            <p class="text-sm text-white/80">Completed Orders</p>
+            <h2 class="mt-3 text-3xl font-bold text-white">{{ $successfulProjects }}</h2>
         </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm text-slate-500">On Going Orders</p>
-            <h2 class="mt-3 text-3xl font-bold text-slate-900">{{ $inProgressProjects }}</h2>
+        <div class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
+            <p class="text-sm text-white/80">On Going Orders</p>
+            <h2 class="mt-3 text-3xl font-bold text-white">{{ $inProgressProjects }}</h2>
         </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm text-slate-500">Cancelled</p>
-            <h2 class="mt-3 text-3xl font-bold text-slate-900">{{ $cancelledProjects }}</h2>
+        <div class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
+            <p class="text-sm text-white/80">Cancelled</p>
+            <h2 class="mt-3 text-3xl font-bold text-white">{{ $cancelledProjects }}</h2>
         </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-sm text-slate-500">Total Orders</p>
-            <h2 class="mt-3 text-3xl font-bold text-slate-900">{{ $totalOrders }}</h2>
+        <div class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
+            <p class="text-sm text-white/80">Total Orders</p>
+            <h2 class="mt-3 text-3xl font-bold text-white">{{ $totalOrders }}</h2>
         </div>
     </div>
 
     <div class="mt-8 grid gap-6 lg:grid-cols-3">
         <div
-            class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2"
+            class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg lg:col-span-2"
             x-data="window.ordersOverviewChart(@js($orderChartData), @js($statusOrder), @js($statusLabels))"
         >
             <div class="flex flex-wrap items-center justify-between gap-4">
-                <h3 class="text-lg font-semibold text-slate-900">Orders Overview</h3>
-                <div class="inline-flex overflow-hidden rounded-lg border border-slate-200">
+                <h3 class="text-lg font-semibold text-white">Orders Overview</h3>
+                <div class="inline-flex overflow-hidden rounded-lg border border-white">
                     <button type="button" class="px-3 py-2 text-xs font-semibold"
                         :class="selectedRange === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700'"
                         @click="selectedRange = 'all'">
@@ -50,24 +50,24 @@
             </div>
 
             <div class="mt-5 grid gap-3 sm:grid-cols-3">
-                <div class="rounded-xl bg-slate-50 px-4 py-3">
-                    <p class="text-xs text-slate-500">Total Orders</p>
-                    <p class="mt-1 text-2xl font-bold text-slate-900" x-text="current.total"></p>
+                <div class="rounded-xl border border-white bg-white/30 px-4 py-3">
+                    <p class="text-xs text-white/80">Total Orders</p>
+                    <p class="mt-1 text-2xl font-bold text-white" x-text="current.total"></p>
                 </div>
-                <div class="rounded-xl bg-emerald-50 px-4 py-3">
-                    <p class="text-xs text-emerald-700">Completed</p>
-                    <p class="mt-1 text-2xl font-bold text-emerald-800" x-text="current.status_counts.completed ?? 0"></p>
+                <div class="rounded-xl border border-white bg-white/30 px-4 py-3">
+                    <p class="text-xs text-white/80">Completed</p>
+                    <p class="mt-1 text-2xl font-bold text-white" x-text="current.status_counts.completed ?? 0"></p>
                 </div>
-                <div class="rounded-xl bg-amber-50 px-4 py-3">
-                    <p class="text-xs text-amber-700">On Going</p>
-                    <p class="mt-1 text-2xl font-bold text-amber-800" x-text="current.status_counts.in_progress ?? 0"></p>
+                <div class="rounded-xl border border-white bg-white/30 px-4 py-3">
+                    <p class="text-xs text-white/80">On Going</p>
+                    <p class="mt-1 text-2xl font-bold text-white" x-text="current.status_counts.in_progress ?? 0"></p>
                 </div>
             </div>
 
-            <div class="relative mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div class="relative mt-6 rounded-xl border border-white bg-white/30 p-4">
                 <div class="mb-4 flex items-center justify-between gap-3">
-                    <p class="text-sm font-semibold text-slate-900" x-text="current.series_label"></p>
-                    <p class="text-xs text-slate-500" x-text="rangeDescription()"></p>
+                    <p class="text-sm font-semibold text-white" x-text="current.series_label"></p>
+                    <p class="text-xs text-white/80" x-text="rangeDescription()"></p>
                 </div>
 
                 <div
@@ -130,59 +130,59 @@
                     </template>
                 </svg>
 
-                <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                <div class="mt-3 flex items-center justify-between text-xs text-white/80">
                     <span class="font-semibold">X: <span x-text="xAxisLabel()"></span></span>
                     <span>Y: Number of orders</span>
                 </div>
 
                 <div class="mt-2" :class="labelGridClass()">
                     <template x-for="(label, index) in current.labels" :key="'label-' + index">
-                        <p class="text-center text-xs font-medium text-slate-600" x-text="label"></p>
+                        <p class="text-center text-xs font-medium text-white/80" x-text="label"></p>
                     </template>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 class="text-lg font-semibold text-slate-900">Recent Status</h3>
+        <div class="rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
+            <h3 class="text-lg font-semibold text-white">Recent Status</h3>
             <div class="mt-4 space-y-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-slate-600">Pending Orders</span>
+                    <span class="text-sm text-white/80">Pending Orders</span>
                     <x-status-badge status="pending" />
-                    <span class="text-sm font-semibold text-slate-900">{{ $orderChartData['all']['status_counts']['pending'] ?? 0 }}</span>
+                    <span class="text-sm font-semibold text-white">{{ $orderChartData['all']['status_counts']['pending'] ?? 0 }}</span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-slate-600">Completed Orders</span>
+                    <span class="text-sm text-white/80">Completed Orders</span>
                     <x-status-badge status="completed" />
-                    <span class="text-sm font-semibold text-slate-900">{{ $orderChartData['all']['status_counts']['completed'] ?? 0 }}</span>
+                    <span class="text-sm font-semibold text-white">{{ $orderChartData['all']['status_counts']['completed'] ?? 0 }}</span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-slate-600">Cancelled Orders</span>
+                    <span class="text-sm text-white/80">Cancelled Orders</span>
                     <x-status-badge status="cancelled" />
-                    <span class="text-sm font-semibold text-slate-900">{{ $orderChartData['all']['status_counts']['cancelled'] ?? 0 }}</span>
+                    <span class="text-sm font-semibold text-white">{{ $orderChartData['all']['status_counts']['cancelled'] ?? 0 }}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mt-8 rounded-2xl border border-white bg-white/60 p-6 shadow-lg">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-slate-900">Recent Notifications</h3>
-            <a href="{{ route('admin.notifications.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+            <h3 class="text-lg font-semibold text-white">Recent Notifications</h3>
+            <a href="{{ route('admin.notifications.index') }}" class="text-sm font-medium text-indigo-100 hover:text-white">
                 View all
             </a>
         </div>
 
         <div class="mt-4 space-y-3">
             @forelse ($adminNotifications as $notification)
-                <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                    <p class="text-sm font-medium text-slate-800">{{ $notification['message'] }}</p>
-                    <p class="mt-1 text-xs text-slate-500">{{ $notification['time'] ?? 'Just now' }}</p>
+                <div class="rounded-xl border border-white bg-white/30 px-4 py-3">
+                    <p class="text-sm font-medium text-white">{{ $notification['message'] }}</p>
+                    <p class="mt-1 text-xs text-white/80">{{ $notification['time'] ?? 'Just now' }}</p>
                 </div>
             @empty
-                <p class="text-sm text-slate-500">No notifications yet.</p>
+                <p class="text-sm text-white/80">No notifications yet.</p>
             @endforelse
         </div>
     </div>
