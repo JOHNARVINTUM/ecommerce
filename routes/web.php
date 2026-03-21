@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
@@ -20,6 +21,18 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/about', 'pages.about')->name('about');
+
+Route::get('/seed/{token}', function (string $token) {
+    abort_unless(app()->environment('production'), 404);
+    abort_unless($token === env('SEED_TOKEN'), 403);
+
+    Artisan::call('db:seed', ['--force' => true]);
+
+    return response()->json([
+        'message' => 'Database seeded.',
+        'output' => Artisan::output(),
+    ]);
+});
 
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 Route::get('/services/category/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
