@@ -102,6 +102,60 @@ class PayMongoService
         ]);
     }
 
+    public function syncOrderPaymentStatus(Order $order): ?Payment
+    {
+        $payment = $order->payments()
+            ->latest()
+            ->first();
+
+        if (! $payment) {
+            return null;
+        }
+
+        if ($payment->status === Payment::STATUS_PAID && $order->payment_status !== Order::PAYMENT_PAID) {
+            $order->forceFill([
+                'payment_status' => Order::PAYMENT_PAID,
+                'status' => $order->status === Order::STATUS_PENDING ? Order::STATUS_CONFIRMED : $order->status,
+            ])->save();
+
+            return $payment->fresh();
+        }
+
+        $sessionId = $payment->payment_reference ?: data_get($payment->metadata, 'checkout_session_id');
+
+        if (! $sessionId) {
+            return $payment;
+        }
+
+        $checkoutSession = $this->retrieveCheckoutSession($sessionId);
+        $checkoutData = data_get($checkoutSession, 'data', []);
+        $payments = data_get($checkoutData, 'attributes.payments', []);
+        $firstPayment = $payments[0] ?? [];
+        $paymentStatus = strtolower((string) data_get($firstPayment, 'attributes.status', ''));
+        $paidAt = data_get($checkoutData, 'attributes.paid_at')
+            ?? data_get($firstPayment, 'attributes.paid_at')
+            ?? data_get($firstPayment, 'attributes.created_at');
+
+        if (in_array($paymentStatus, ['paid', 'succeeded'], true) || $payments !== []) {
+            $payment->forceFill([
+                'status' => Payment::STATUS_PAID,
+                'paid_at' => $paidAt ? Carbon::createFromTimestamp((int) $paidAt) : now(),
+                'payment_method' => data_get($firstPayment, 'attributes.source.type', $payment->payment_method),
+                'metadata' => array_merge($payment->metadata ?? [], [
+                    'checkout_payment_id' => data_get($firstPayment, 'id'),
+                    'paymongo_checkout_session' => $checkoutData,
+                ]),
+            ])->save();
+
+            $order->forceFill([
+                'payment_status' => Order::PAYMENT_PAID,
+                'status' => $order->status === Order::STATUS_PENDING ? Order::STATUS_CONFIRMED : $order->status,
+            ])->save();
+        }
+
+        return $payment->fresh();
+    }
+
     public function markCheckoutSessionPaid(array $payload): ?Payment
     {
         $sessionId = data_get($payload, 'data.attributes.data.id');
@@ -200,6 +254,23 @@ class PayMongoService
         $expectedSignature = hash_hmac('sha256', $timestamp.'.'.$payload, $secret);
 
         return hash_equals($expectedSignature, $providedSignature);
+    }
+
+    private function retrieveCheckoutSession(string $sessionId): array
+    {
+        $secretKey = (string) config('services.paymongo.secret_key');
+
+        if ($secretKey === '') {
+            throw new \RuntimeException('PayMongo secret key is missing.');
+        }
+
+        $response = Http::withBasicAuth($secretKey, '')
+            ->acceptJson()
+            ->get($this->endpoint('/checkout_sessions/'.$sessionId));
+
+        $this->throwIfFailed($response);
+
+        return $response->json() ?? [];
     }
 
     private function endpoint(string $path): string

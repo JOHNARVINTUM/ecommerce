@@ -60,9 +60,21 @@ class PaymentController extends Controller
         $order = $this->resolveOrderFromRequest($request);
 
         if ($order) {
+            try {
+                $this->payMongoService->syncOrderPaymentStatus($order->loadMissing('payments'));
+                $order->refresh();
+            } catch (\Throwable $exception) {
+                Log::warning('Unable to sync PayMongo payment status on success redirect.', [
+                    'order_id' => $order->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+
             return redirect()
                 ->route('orders.show', $order)
-                ->with('success', 'Payment submitted. We are waiting for PayMongo to confirm it.');
+                ->with('success', $order->payment_status === Order::PAYMENT_PAID
+                    ? 'Payment confirmed successfully.'
+                    : 'Payment submitted. We are waiting for PayMongo to confirm it.');
         }
 
         return redirect()

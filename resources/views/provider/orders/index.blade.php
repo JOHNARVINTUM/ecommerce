@@ -1,51 +1,46 @@
-@extends('layouts.app')
+@extends('layouts.provider')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-10">
-    <div class="mb-8 flex items-start justify-between gap-4">
+<div class="space-y-6">
+    <div class="flex flex-wrap items-start justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Provider Orders</h1>
-            <p class="mt-2 text-gray-600">Manage bookings made for your services.</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.26em] text-white/45">Provider Workspace</p>
+            <h1 class="mt-2 text-3xl font-bold text-white">Orders</h1>
+            <p class="mt-2 text-white/65">Manage bookings made for your services.</p>
         </div>
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800">
+        <div class="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90">
             New Orders: {{ $newOrdersCount }}
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-800">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <div class="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-white/10">
+                <thead class="bg-white/[0.03]">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Order #</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Customer</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Service</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Amount</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Action</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Order #</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Customer</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Service</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
+                <tbody class="divide-y divide-white/10">
                     @forelse ($orders as $order)
                         <tr>
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $order->order_number }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">{{ $order->customer->name ?? $order->customer_name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">{{ $order->serviceListing->title ?? 'N/A' }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">PHP {{ number_format($order->amount, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-700">{{ $order->status_label }}</td>
+                            <td class="px-6 py-4 text-sm font-medium text-white">{{ $order->order_number }}</td>
+                            <td class="px-6 py-4 text-sm text-white/85">{{ $order->customer->name ?? $order->customer_name }}</td>
+                            <td class="px-6 py-4 text-sm text-white/85">{{ $order->serviceListing->title ?? 'N/A' }}</td>
+                            <td class="px-6 py-4 text-sm text-white/85">PHP {{ number_format($order->amount, 2) }}</td>
+                            <td class="px-6 py-4 text-sm text-white/85">{{ $order->status_label }}</td>
                             <td class="px-6 py-4 text-sm">
-                                <a href="{{ route('provider.orders.show', $order) }}" class="font-medium text-indigo-600 hover:text-indigo-800">View</a>
+                                <a href="{{ route('provider.orders.show', $order) }}" class="font-medium text-indigo-300 hover:text-indigo-200">View</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-500">
+                            <td colspan="6" class="px-6 py-12 text-center text-sm text-white/60">
                                 No provider orders found yet.
                             </td>
                         </tr>
@@ -55,7 +50,7 @@
         </div>
     </div>
 
-    <div class="mt-6">
+    <div>
         {{ $orders->links() }}
     </div>
 </div>
