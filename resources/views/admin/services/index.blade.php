@@ -2,7 +2,12 @@
 
 @section('content')
     <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
-        <h1 class="text-2xl font-bold text-white">Services</h1>
+        <div class="flex items-center justify-between gap-4">
+            <h1 class="text-2xl font-bold text-white">Services</h1>
+            <a href="{{ route('admin.services.create') }}" class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#111] transition hover:bg-white/90">
+                Add Service
+            </a>
+        </div>
 
         <div class="mt-6 overflow-x-auto">
             <table class="min-w-full divide-y divide-white/10">
@@ -30,6 +35,9 @@
                             </td>
                             <td class="px-4 py-3 text-sm text-white/80">
                                 <div class="flex items-center gap-3">
+                                    <a href="{{ route('admin.services.edit', $service) }}" class="font-semibold text-sky-300 hover:text-sky-200">
+                                        Edit
+                                    </a>
                                     <form method="POST" action="{{ route('admin.services.toggle', $service) }}">
                                         @csrf
                                         @method('PATCH')

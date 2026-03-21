@@ -5,12 +5,26 @@
         <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-white">Customer Overview</h1>
+                    <h1 class="text-2xl font-bold text-white">User Overview</h1>
                     <p class="mt-1 text-white/65">Detailed account summary and order activity.</p>
                 </div>
-                <a href="{{ route('admin.users.index') }}" class="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 hover:border-white/35 hover:bg-white/10">
-                    Back to Users
-                </a>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.users.edit', $user) }}" class="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 hover:border-white/35 hover:bg-white/10">
+                        Edit User
+                    </a>
+                    @if ($user->id !== auth()->id())
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="rounded-lg border border-rose-400/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-200 hover:border-rose-300/50 hover:bg-rose-500/20">
+                                Delete User
+                            </button>
+                        </form>
+                    @endif
+                    <a href="{{ route('admin.users.index') }}" class="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 hover:border-white/35 hover:bg-white/10">
+                        Back to Users
+                    </a>
+                </div>
             </div>
 
             <div class="mt-6 grid gap-4 md:grid-cols-3">

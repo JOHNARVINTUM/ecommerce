@@ -89,9 +89,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/create', [AdminServiceController::class, 'create'])->name('services.create');
+    Route::post('/services', [AdminServiceController::class, 'store'])->name('services.store');
+    Route::get('/services/{service}/edit', [AdminServiceController::class, 'edit'])->name('services.edit');
+    Route::put('/services/{service}', [AdminServiceController::class, 'update'])->name('services.update');
     Route::patch('/services/{service}/toggle', [AdminServiceController::class, 'toggle'])->name('services.toggle');
     Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
