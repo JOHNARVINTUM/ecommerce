@@ -24,4 +24,9 @@ class ServiceCategory extends Model
     {
         return $this->hasMany(ServiceListing::class, 'service_category_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 }

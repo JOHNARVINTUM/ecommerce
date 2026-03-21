@@ -46,55 +46,68 @@
                 <nav class="flex items-center gap-3 text-[11px] text-white/85 sm:gap-8 sm:text-sm">
                     <a href="{{ route('services.index') }}" class="transition hover:text-white">Services</a>
                     <a href="{{ route('about') }}" class="transition hover:text-white">About Us</a>
-                    <a href="{{ route('orders.index') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
-                            <path d="M6 7.5C6 4.74 8.24 2.5 11 2.5C13.76 2.5 16 4.74 16 7.5V9H18.5C19.05 9 19.5 9.45 19.5 10V19.5C19.5 20.6 18.6 21.5 17.5 21.5H4.5C3.4 21.5 2.5 20.6 2.5 19.5V10C2.5 9.45 2.95 9 3.5 9H6V7.5Z" stroke="currentColor" stroke-width="1.6"/>
-                            <path d="M8.5 9V7.5C8.5 6.12 9.62 5 11 5C12.38 5 13.5 6.12 13.5 7.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                        </svg>
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">Log out</button>
-                    </form>
+                    @auth
+                        <a href="{{ route('cart.index') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
+                                <path d="M6 7.5C6 4.74 8.24 2.5 11 2.5C13.76 2.5 16 4.74 16 7.5V9H18.5C19.05 9 19.5 9.45 19.5 10V19.5C19.5 20.6 18.6 21.5 17.5 21.5H4.5C3.4 21.5 2.5 20.6 2.5 19.5V10C2.5 9.45 2.95 9 3.5 9H6V7.5Z" stroke="currentColor" stroke-width="1.6"/>
+                                <path d="M8.5 9V7.5C8.5 6.12 9.62 5 11 5C12.38 5 13.5 6.12 13.5 7.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                        <!-- User Dropdown -->
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+                            <button @click="open = ! open" class="flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">
+                                <span>{{ Auth::user()->name }}</span>
+                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open"
+                                    x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg"
+                                    style="display: none;"
+                                    @click="open = false">
+                                <div class="rounded-md ring-1 ring-black ring-opacity-5 bg-white py-1">
+                                    <a href="{{ route('profile.edit') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Profile
+                                    </a>
+                                    <a href="{{ route('orders.index') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Orders
+                                    </a>
+                                    <a href="{{ route('cart.index') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Cart
+                                    </a>
+                                    <hr class="my-1 border-gray-200">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                            Log out
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
+                                <path d="M6 7.5C6 4.74 8.24 2.5 11 2.5C13.76 2.5 16 4.74 16 7.5V9H18.5C19.05 9 19.5 9.45 19.5 10V19.5C19.5 20.6 18.6 21.5 17.5 21.5H4.5C3.4 21.5 2.5 20.6 2.5 19.5V10C2.5 9.45 2.95 9 3.5 9H6V7.5Z" stroke="currentColor" stroke-width="1.6"/>
+                                <path d="M8.5 9V7.5C8.5 6.12 9.62 5 11 5C12.38 5 13.5 6.12 13.5 7.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                        <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">USER</a>
+                    @endauth
                 </nav>
             </div>
         </header>
 
         <section class="mx-auto w-full max-w-[1440px] px-5 py-10 sm:px-8 lg:px-10">
-            <div class="grid gap-8 xl:grid-cols-[300px_minmax(0,1fr)]">
-                <div class="space-y-8">
-                    <aside class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
-                        <div class="flex items-center gap-4">
-                            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/70 text-lg font-bold text-white">
-                                {{ $initials }}
-                            </div>
-                            <div>
-                                <p class="text-lg font-semibold text-white">{{ $user->name }}</p>
-                                <p class="text-sm text-white/55">{{ $user->email }}</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-5 border-t border-white/10 pt-4">
-                            <div class="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3">
-                                <span class="font-medium">My Profile</span>
-                                <span class="text-white/50">></span>
-                            </div>
-                            <div class="mt-3 flex items-center justify-between px-4 py-3">
-                                <span class="font-medium">Notification</span>
-                                <span class="text-sm text-white/55">{{ $settings?->notifications_enabled ? 'Allow' : 'Off' }}</span>
-                            </div>
-                            <form method="POST" action="{{ route('logout') }}" class="mt-1">
-                                @csrf
-                                <button type="submit" class="flex w-full items-center justify-between px-4 py-3 text-left font-medium transition hover:text-white/75">
-                                    <span>Log Out</span>
-                                    <span class="text-white/50">></span>
-                                </button>
-                            </form>
-                        </div>
-                    </aside>
-                </div>
-
-                <section class="profile-panel rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)] sm:p-8" id="profile-panel">
+            <div class="max-w-4xl mx-auto">
+                <div class="profile-panel rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)] sm:p-8" id="profile-panel">
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
                             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/70 text-lg font-bold text-white">
@@ -157,9 +170,9 @@
                             <div class="border-t border-white/10"></div>
 
                             <div class="grid gap-3 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-                                <label for="location" class="text-xl font-medium">Location</label>
+                                <label for="location" class="text-xl font-medium">Address</label>
                                 <div>
-                                    <input id="location" name="location" type="text" value="{{ old('location', $profile?->location) }}" data-initial-value="{{ old('location', $profile?->location) }}" placeholder="Add location" class="profile-input w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-right text-xl text-white/70 placeholder:text-white/40 transition focus:border-white/25 focus:bg-white/[0.04] focus:outline-none md:text-right" {{ $startInEditMode ? '' : 'disabled' }}>
+                                    <input id="location" name="location" type="text" value="{{ old('location', $profile?->location) }}" data-initial-value="{{ old('location', $profile?->location) }}" placeholder="Add address" class="profile-input w-full rounded-lg border border-transparent bg-transparent px-3 py-2 text-right text-xl text-white/70 placeholder:text-white/40 transition focus:border-white/25 focus:bg-white/[0.04] focus:outline-none md:text-right" {{ $startInEditMode ? '' : 'disabled' }}>
                                     <x-input-error :messages="$errors->get('location')" class="mt-2 text-sm" />
                                 </div>
                             </div>
@@ -174,7 +187,7 @@
                             </button>
                         </div>
                     </form>
-                </section>
+                </div>
             </div>
         </section>
 

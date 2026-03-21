@@ -43,19 +43,32 @@ class CheckoutController extends Controller
             'customer_email' => ['required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:255'],
             'customer_address' => ['nullable', 'string'],
-            'scheduled_date' => ['nullable', 'date', 'after_or_equal:today'],
-            'scheduled_time' => ['nullable'],
-            'notes' => ['nullable', 'string'],
-            'payment_method' => ['required', 'in:paymongo_checkout_demo'],
+            'payment_method' => ['required', 'in:gcash_demo,maya_demo'],
+            'billing_name' => ['nullable', 'string', 'max:255'],
+            'billing_phone' => ['nullable', 'string', 'max:255'],
+            'billing_address' => ['nullable', 'string'],
             'simulate_payment_confirmation' => ['required', 'accepted'],
         ]);
 
         $paymentMethod = $validated['payment_method'];
-        $paymentWasSimulated = $paymentMethod === 'paymongo_checkout_demo';
-        $paymentSummary = 'Payment simulation: PayMongo hosted checkout demo (' . config('services.paymongo.checkout_url') . ')';
+
+        if ($paymentMethod === 'paymongo_checkout_demo') {
+            $paymentWasSimulated = true;
+            $paymentSummary = 'Payment simulation: PayMongo hosted checkout demo (' . config('services.paymongo.checkout_url') . ')';
+        } elseif ($paymentMethod === 'gcash_demo') {
+            $paymentWasSimulated = true;
+            $paymentSummary = 'Payment simulation: Gcash checkout demo to number 0917-111-2222';
+        } else {
+            $paymentWasSimulated = true;
+            $paymentSummary = 'Payment simulation: Maya checkout demo to number 0918-111-3333';
+        }
+
         $orderNotes = trim(implode("\n\n", array_filter([
             $validated['notes'] ?? null,
-            $paymentWasSimulated ? $paymentSummary : null,
+            $paymentSummary,
+            $validated['billing_name'] ? 'Billing Name: ' . $validated['billing_name'] : null,
+            $validated['billing_phone'] ? 'Billing Phone: ' . $validated['billing_phone'] : null,
+            $validated['billing_address'] ? 'Billing Address: ' . $validated['billing_address'] : null,
         ])));
 
         $order = Order::create([
@@ -65,8 +78,6 @@ class CheckoutController extends Controller
             'order_number' => 'LIMAX-' . strtoupper(Str::random(10)),
             'amount' => $service->price,
             'currency' => 'PHP',
-            'scheduled_date' => $validated['scheduled_date'] ?? null,
-            'scheduled_time' => $validated['scheduled_time'] ?? null,
             'status' => Order::STATUS_PENDING,
             'payment_status' => $paymentWasSimulated ? Order::PAYMENT_PAID : Order::PAYMENT_UNPAID,
             'customer_name' => $validated['customer_name'],

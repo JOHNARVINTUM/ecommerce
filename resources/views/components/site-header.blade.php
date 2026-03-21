@@ -13,17 +13,36 @@
 
         <div class="flex items-center gap-3">
             @auth
-                <a href="{{ route('dashboard') }}"
-                   class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                    Dashboard
-                </a>
+                <!-- User Dropdown -->
+                <x-dropdown align="right" width="48">
+                    <x-slot name="trigger">
+                        <button class="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                            <span>{{ Auth::user()->name }}</span>
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </x-slot>
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
-                        Logout
-                    </button>
-                </form>
+                    <x-slot name="content">
+                        <x-dropdown-link href="{{ route('profile.edit') }}">
+                            My Profile
+                        </x-dropdown-link>
+                        <x-dropdown-link href="{{ route('orders.index') }}">
+                            My Orders
+                        </x-dropdown-link>
+                        <x-dropdown-link href="{{ route('cart.index') }}">
+                            My Cart
+                        </x-dropdown-link>
+                        <hr class="my-1 border-slate-200">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link as="button" type="submit">
+                                Log out
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
             @else
                 <a href="{{ route('login') }}" class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                     Log in

@@ -150,15 +150,28 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            UserProfile::updateOrCreate(
-                ['user_id' => $customer->id],
-                [
-                    'full_name' => $customerData['name'],
-                    'phone' => '09990000000',
-                    'location' => 'Philippines',
-                    'bio' => 'LIMAX customer account.',
-                ]
-            );
+            // Special handling for customer1@limax.test
+            if ($customerData['email'] === 'customer1@limax.test') {
+                UserProfile::updateOrCreate(
+                    ['user_id' => $customer->id],
+                    [
+                        'full_name' => $customerData['name'],
+                        'phone' => '09123456789',
+                        'location' => '598 Guyabano St. Napico Manggahan Pasig City',
+                        'bio' => 'LIMAX customer account.',
+                    ]
+                );
+            } else {
+                UserProfile::updateOrCreate(
+                    ['user_id' => $customer->id],
+                    [
+                        'full_name' => $customerData['name'],
+                        'phone' => '09990000000',
+                        'location' => 'Philippines',
+                        'bio' => 'LIMAX customer account.',
+                    ]
+                );
+            }
 
             UserSetting::updateOrCreate(
                 ['user_id' => $customer->id],

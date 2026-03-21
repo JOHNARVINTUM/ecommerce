@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
-    @if (request()->routeIs('home', 'user.home', 'login', 'register', 'services.index', 'services.category', 'services.show', 'about', 'profile.edit', 'orders.index', 'orders.show', 'cart.index'))
+    @if (request()->routeIs('home', 'user.home', 'login', 'register', 'services.index', 'services.category', 'services.show', 'about', 'profile.edit', 'orders.index', 'orders.show', 'cart.index', 'checkout.*'))
         <main>
             {{ $slot ?? '' }}
             @yield('content')
