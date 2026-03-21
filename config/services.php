@@ -36,7 +36,14 @@ return [
     ],
 
     'paymongo' => [
-        'checkout_url' => env('PAYMONGO_CHECKOUT_URL', 'https://checkout.paymongo.com/b18fba4a4b552511204485d7'),
+        'public_key' => env('PAYMONGO_PUBLIC_KEY'),
+        'secret_key' => env('PAYMONGO_SECRET_KEY'),
+        'webhook_secret' => env('PAYMONGO_WEBHOOK_SECRET'),
+        'base_url' => env('PAYMONGO_BASE_URL', 'https://api.paymongo.com/v1'),
+        'payment_methods' => array_values(array_filter(array_map(
+            static fn (string $value) => trim($value),
+            explode(',', (string) env('PAYMONGO_PAYMENT_METHODS', 'gcash'))
+        ))),
     ],
 
 ];

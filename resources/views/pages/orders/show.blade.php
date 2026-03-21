@@ -77,9 +77,20 @@
                 <h1 class="mt-2 text-3xl font-bold text-white">Order Details</h1>
                 <p class="mt-2 text-white/65">Review your booking information and customer details.</p>
             </div>
-            <a href="{{ route('orders.index') }}" class="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 transition hover:border-white/30 hover:bg-white/10">
-                Back to My Orders
-            </a>
+            <div class="flex flex-wrap items-center gap-3">
+                @if ($order->payment_status !== 'paid')
+                    <form method="POST" action="{{ route('payments.start', $order) }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
+                            Pay With PayMongo
+                        </button>
+                    </form>
+                @endif
+
+                <a href="{{ route('orders.index') }}" class="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 transition hover:border-white/30 hover:bg-white/10">
+                    Back to My Orders
+                </a>
+            </div>
         </div>
 
         <div class="mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
