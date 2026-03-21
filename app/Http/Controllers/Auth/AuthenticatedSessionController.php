@@ -32,7 +32,11 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
 
         if ($user && $user->role === 'admin') {
-            return redirect()->route('admin.orders.index');
+            // Special redirect for limax.feu@gmail.com
+            if ($user->email === 'limax.feu@gmail.com') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('admin.dashboard');
         }
 
         if ($user && $user->role === 'provider') {
