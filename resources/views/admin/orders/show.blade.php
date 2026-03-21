@@ -26,7 +26,10 @@
                     <span class="font-semibold">Status:</span>
                     <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $order->status_color }}">{{ $order->status_label }}</span>
                 </p>
-                <p><span class="font-semibold">Payment:</span> {{ ucfirst($order->payment_status) }}</p>
+                <p>
+                    <span class="font-semibold">Payment:</span>
+                    <x-status-badge class="ml-2" :status="$order->payment_status" />
+                </p>
                 <p><span class="font-semibold">Preferred Date:</span> {{ $order->scheduled_date ? $order->scheduled_date->format('M d, Y') : 'Not set' }}</p>
                 <p><span class="font-semibold">Preferred Time:</span> {{ $order->scheduled_time ?: 'Not set' }}</p>
                 <p class="md:col-span-2"><span class="font-semibold">Notes:</span> {{ $order->notes ?: 'N/A' }}</p>
@@ -69,7 +72,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
+                    <button type="submit" class="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#111] transition hover:bg-white/90">
                         Save Changes
                     </button>
                 </form>

@@ -20,8 +20,14 @@
             <div class="grid grid-cols-1 gap-4 text-sm text-white/85 md:grid-cols-2">
                 <p><span class="font-semibold text-white">Order Number:</span> {{ $order->order_number }}</p>
                 <p><span class="font-semibold text-white">Service:</span> {{ $order->serviceListing->title ?? 'N/A' }}</p>
-                <p><span class="font-semibold text-white">Current Status:</span> {{ $order->status_label }}</p>
-                <p><span class="font-semibold text-white">Payment Status:</span> {{ ucfirst($order->payment_status) }}</p>
+                <p>
+                    <span class="font-semibold text-white">Current Status:</span>
+                    <span class="ml-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $order->status_color }}">{{ $order->status_label }}</span>
+                </p>
+                <p>
+                    <span class="font-semibold text-white">Payment Status:</span>
+                    <x-status-badge class="ml-2" :status="$order->payment_status" />
+                </p>
                 <p><span class="font-semibold text-white">Customer Name:</span> {{ $order->customer_name }}</p>
                 <p><span class="font-semibold text-white">Customer Email:</span> {{ $order->customer_email }}</p>
                 <p><span class="font-semibold text-white">Phone:</span> {{ $order->customer_phone ?: 'N/A' }}</p>

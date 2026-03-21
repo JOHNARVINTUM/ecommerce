@@ -16,7 +16,9 @@ class AdminNotificationController extends Controller
             ->map(function (Order $order) {
                 return [
                     'order_number' => $order->order_number,
+                    'status' => $order->status,
                     'status_label' => $order->status_label,
+                    'status_color' => $order->status_color,
                     'message' => sprintf(
                         'Order %s updated for %s (%s).',
                         $order->order_number,

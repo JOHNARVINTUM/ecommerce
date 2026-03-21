@@ -23,6 +23,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Service</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Amount</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Payment</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/60">Action</th>
                     </tr>
                 </thead>
@@ -33,14 +34,19 @@
                             <td class="px-6 py-4 text-sm text-white/85">{{ $order->customer->name ?? $order->customer_name }}</td>
                             <td class="px-6 py-4 text-sm text-white/85">{{ $order->serviceListing->title ?? 'N/A' }}</td>
                             <td class="px-6 py-4 text-sm text-white/85">PHP {{ number_format($order->amount, 2) }}</td>
-                            <td class="px-6 py-4 text-sm text-white/85">{{ $order->status_label }}</td>
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $order->status_color }}">{{ $order->status_label }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <x-status-badge :status="$order->payment_status" />
+                            </td>
                             <td class="px-6 py-4 text-sm">
                                 <a href="{{ route('provider.orders.show', $order) }}" class="font-medium text-indigo-300 hover:text-indigo-200">View</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-sm text-white/60">
+                            <td colspan="7" class="px-6 py-12 text-center text-sm text-white/60">
                                 No provider orders found yet.
                             </td>
                         </tr>
