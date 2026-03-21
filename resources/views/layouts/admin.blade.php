@@ -73,9 +73,6 @@
                 <a href="{{ route('admin.team-members.index') }}" class="admin-link {{ request()->routeIs('admin.team-members.*') ? 'active bg-white text-slate-900' : 'text-white/85 hover:bg-white/10' }} block rounded-xl px-4 py-3 text-sm font-medium transition">
                     Team Members
                 </a>
-                <a href="{{ route('admin.pages.index') }}" class="admin-link {{ request()->routeIs('admin.pages.*') ? 'active bg-white text-slate-900' : 'text-white/85 hover:bg-white/10' }} block rounded-xl px-4 py-3 text-sm font-medium transition">
-                    Pages
-                </a>
             </nav>
         </aside>
 
