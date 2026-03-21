@@ -79,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/orders/{order}/status', [ProviderOrderController::class, 'updateStatus'])->name('orders.update-status');
     });
 
-  Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
@@ -88,15 +88,26 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
 
     Route::get('/services', [AdminServiceController::class, 'index'])->name('services.index');
+    Route::patch('/services/{service}/toggle', [AdminServiceController::class, 'toggle'])->name('services.toggle');
+    Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])->name('services.destroy');
 
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [AdminCategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     Route::get('/team-members', [AdminTeamMemberController::class, 'index'])->name('team-members.index');
     Route::get('/team-members/create', [AdminTeamMemberController::class, 'create'])->name('team-members.create');
     Route::post('/team-members', [AdminTeamMemberController::class, 'store'])->name('team-members.store');
+    Route::get('/team-members/{user}/edit', [AdminTeamMemberController::class, 'edit'])->name('team-members.edit');
+    Route::put('/team-members/{user}', [AdminTeamMemberController::class, 'update'])->name('team-members.update');
+    Route::delete('/team-members/{user}', [AdminTeamMemberController::class, 'destroy'])->name('team-members.destroy');
 
     Route::get('/pages', [AdminPageController::class, 'index'])->name('pages.index');
 });

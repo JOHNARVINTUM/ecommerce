@@ -9,8 +9,8 @@
             </a>
 
             <nav class="flex items-center gap-3 text-[11px] text-white/85 sm:gap-8 sm:text-sm">
-                <a href="{{ route('services.index') }}" class="transition hover:text-white">Services</a>
-                <a href="{{ route('about') }}" class="transition hover:text-white">About Us</a>
+                <a href="{{ route('services.index') }}" class="{{ request()->routeIs('services.*') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">Services</a>
+                <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">About Us</a>
                 @auth
                     <a href="{{ route('cart.index') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">

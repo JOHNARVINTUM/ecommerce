@@ -14,12 +14,14 @@
     $serviceCategories = \App\Models\ServiceCategory::active()->orderBy('sort_order')->take(6)->get();
 
     $categoryImages = [
-        'programming' => 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80',
-        'web-design' => 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
-        'graphic-design' => 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
-        'video-editing' => 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=800&q=80',
+        'programming' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80',
+        'web-design' => 'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=1200&q=80',
+        'graphic-design' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80',
+        'video-editing' => 'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=1200&q=80',
+        'photo-editing' => 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80',
+        'logo-making' => 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1200&q=80',
     ];
-    $exampleImage = 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80';
+    $exampleImage = 'https://picsum.photos/seed/services-example/1400/900';
 @endphp
 
 @section('content')
@@ -31,8 +33,8 @@
             </a>
 
             <nav class="flex items-center gap-3 text-[11px] text-white/85 sm:gap-8 sm:text-sm">
-                <a href="{{ route('services.index') }}" class="transition hover:text-white">Services</a>
-                <a href="{{ route('about') }}" class="transition hover:text-white">About Us</a>
+                <a href="{{ route('services.index') }}" class="{{ request()->routeIs('services.*') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">Services</a>
+                <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">About Us</a>
                 @auth
                     <a href="{{ route('cart.index') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -185,37 +187,6 @@
                     <textarea rows="4" placeholder="Add a note..." class="mt-3 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-3 text-sm text-white placeholder:text-white/50 focus:border-white/30 focus:outline-none"></textarea>
                 </div>
 
-                @if($serviceCategories->count() > 0)
-                <div class="rounded-xl border border-white/10 bg-white/[0.04] px-6 py-6">
-                    <h3 class="text-[15px] font-semibold text-white">Explore Categories</h3>
-                    <p class="mt-1 text-xs text-white/70">Discover more services</p>
-
-                    <div class="mt-5 grid gap-4 grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
-                        @foreach($serviceCategories as $category)
-                            @php
-                                $cardImage = $categoryImages[$category->slug] ?? $exampleImage;
-                            @endphp
-                            <a href="{{ route('services.category', $category->slug) }}" class="group block overflow-hidden rounded-lg border border-white/5 transition hover:border-white/20">
-                                <div class="overflow-hidden bg-white/5">
-                                    <img src="{{ $cardImage }}" alt="{{ $category->name }}" class="h-24 w-full object-cover transition duration-300 group-hover:scale-105">
-                                </div>
-                                <div class="p-3">
-                                    <h4 class="text-xs font-semibold text-white group-hover:text-indigo-400 transition line-clamp-2">{{ $category->name }}</h4>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t border-white/10">
-                        <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition">
-                            <span>View all categories</span>
-                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                @endif
             </div>
 
             <aside class="space-y-4">
@@ -278,7 +249,47 @@
                 </div>
             </aside>
         </div>
+
+        @if($serviceCategories->count() > 0)
+            <div class="mt-6 rounded-xl border border-white/10 bg-white/[0.04] px-6 py-6">
+                <h3 class="text-[15px] font-semibold text-white">Explore Categories</h3>
+                <p class="mt-1 text-xs text-white/70">Discover more services</p>
+
+                <div class="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    @foreach($serviceCategories as $category)
+                        @php
+                            $cardImage = $categoryImages[$category->slug] ?? $exampleImage;
+                        @endphp
+                        <a href="{{ route('services.category', $category->slug) }}" class="group block overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-violet-300/45 hover:shadow-[0_24px_44px_rgba(2,6,23,0.35)]">
+                            <div class="overflow-hidden">
+                                <img src="{{ $cardImage }}" alt="{{ $category->name }}" class="h-48 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-52">
+                            </div>
+                            <div class="p-5 sm:p-6">
+                                <h4 class="text-2xl font-semibold text-white">{{ $category->name }}</h4>
+                                <p class="mt-3 min-h-[84px] text-sm leading-6 text-white/60">
+                                    {{ $category->headline ?: ($category->description ?: 'add description here') }}
+                                </p>
+                                <span class="mt-5 inline-flex items-center text-sm font-semibold text-white transition group-hover:text-violet-300">
+                                    Explore More
+                                    <span class="ml-1">&gt;</span>
+                                </span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="mt-4 border-t border-white/10 pt-4">
+                    <a href="{{ route('services.index') }}" class="inline-flex items-center gap-2 text-xs font-medium text-indigo-400 transition hover:text-indigo-300">
+                        <span>View all categories</span>
+                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        @endif
     </section>
 
+    <x-auth-footer />
 </div>
 @endsection

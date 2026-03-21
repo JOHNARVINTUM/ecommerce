@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserSetting;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminTeamMemberController extends Controller
 {
@@ -83,5 +85,107 @@ class AdminTeamMemberController extends Controller
         return redirect()
             ->route('admin.team-members.index')
             ->with('success', 'Provider account created successfully.');
+    }
+
+    public function edit(User $user)
+    {
+        abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PROVIDER], true), 404);
+
+        $user->load(['profile', 'providerProfile']);
+
+        return view('admin.team-members.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PROVIDER], true), 404);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string'],
+            'display_name' => ['nullable', 'string', 'max:255'],
+            'headline' => ['nullable', 'string', 'max:255'],
+            'country' => ['nullable', 'string', 'max:255'],
+            'languages' => ['nullable', 'string', 'max:255'],
+            'response_time' => ['nullable', 'string', 'max:255'],
+            'github_url' => ['nullable', 'url', 'max:255'],
+        ]);
+
+        DB::transaction(function () use ($validated, $user) {
+            $userData = [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ];
+
+            if (! empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+
+            $user->update($userData);
+
+            UserProfile::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'full_name' => $validated['name'],
+                    'phone' => $validated['phone'] ?? null,
+                    'location' => $validated['location'] ?? null,
+                    'bio' => $validated['bio'] ?? 'Provider account updated by admin.',
+                ]
+            );
+
+            UserSetting::firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'language' => 'en',
+                    'theme' => 'light',
+                    'notifications_enabled' => true,
+                ]
+            );
+
+            if ($user->role === User::ROLE_PROVIDER) {
+                ProviderProfile::updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'display_name' => $validated['display_name'] ?? $validated['name'],
+                        'headline' => $validated['headline'] ?? 'Service Provider',
+                        'bio' => $validated['bio'] ?? 'Provider account updated by admin.',
+                        'country' => $validated['country'] ?? 'Philippines',
+                        'languages' => $validated['languages'] ?? 'English',
+                        'response_time' => $validated['response_time'] ?? '1 hour',
+                        'last_delivery_note' => 'Profile updated.',
+                        'member_since' => optional($user->providerProfile)->member_since ?? now()->toDateString(),
+                        'avatar_path' => optional($user->providerProfile)->avatar_path,
+                        'github_url' => $validated['github_url'] ?? null,
+                    ]
+                );
+            }
+        });
+
+        return redirect()->route('admin.team-members.index')->with('success', 'Team member updated successfully.');
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PROVIDER], true), 404);
+
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.team-members.index')->with('error', 'You cannot delete your own account.');
+        }
+
+        if ($user->role === User::ROLE_ADMIN) {
+            return redirect()->route('admin.team-members.index')->with('error', 'Admin accounts cannot be deleted from this page.');
+        }
+
+        if ($user->serviceListings()->exists() || $user->providerOrders()->exists()) {
+            return redirect()->route('admin.team-members.index')->with('error', 'Cannot delete provider with linked services or orders.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.team-members.index')->with('success', 'Team member deleted successfully.');
     }
 }

@@ -78,8 +78,8 @@
                 </a>
 
                 <nav class="flex items-center gap-3 text-[11px] text-white/85 sm:gap-8 sm:text-sm">
-                    <a href="{{ route('services.index') }}" class="transition hover:text-white">Services</a>
-                    <a href="{{ route('about') }}" class="transition hover:text-white">About Us</a>
+                    <a href="{{ route('services.index') }}" class="{{ request()->routeIs('services.*') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">Services</a>
+                    <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'font-semibold text-white' : 'text-white/85' }} transition hover:text-white">About Us</a>
                     @auth
                         <a href="{{ route('cart.index') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -87,7 +87,44 @@
                                 <path d="M8.5 9V7.5C8.5 6.12 9.62 5 11 5C12.38 5 13.5 6.12 13.5 7.5V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                             </svg>
                         </a>
-                        <a href="{{ route('profile.edit') }}" class="rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">USER</a>
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @close.stop="open = false">
+                            <button @click="open = ! open" class="flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black transition hover:bg-white/90">
+                                <span>{{ Auth::user()->name }}</span>
+                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open"
+                                    x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg"
+                                    style="display: none;"
+                                    @click="open = false">
+                                <div class="rounded-md ring-1 ring-black ring-opacity-5 bg-white py-1">
+                                    <a href="{{ route('profile.edit') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Profile
+                                    </a>
+                                    <a href="{{ route('orders.index') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Orders
+                                    </a>
+                                    <a href="{{ route('cart.index') }}" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                        My Cart
+                                    </a>
+                                    <hr class="my-1 border-gray-200">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100">
+                                            Log out
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('login') }}" aria-label="Cart" class="inline-flex items-center justify-center text-white transition hover:text-white/75">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -156,7 +193,7 @@
                 @foreach ($members as $member)
                     <article class="about-card about-reveal overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] text-white">
                         <div class="overflow-hidden">
-                            <img src="{{ $member['image'] }}" alt="{{ $member['name'] }}" onerror="this.onerror=null;this.src='{{ asset('img/maker.png') }}';" class="aspect-square w-full object-cover object-top">
+                            <img src="{{ $member['image'] }}" alt="{{ $member['name'] }}" class="aspect-square w-full object-cover object-top">
                         </div>
                         <div class="px-4 py-4">
                             <p class="text-sm font-semibold">{{ $member['name'] }}</p>
