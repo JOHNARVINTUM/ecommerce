@@ -41,7 +41,7 @@
         </aside>
 
         <div class="flex-1">
-            <header class="border-b border-white/10 bg-[#0d0e13]/90 backdrop-blur-md">
+            <header class="sticky top-0 z-40 border-b border-white/10 bg-[#0d0e13]/90 backdrop-blur-md">
                 <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                     <div>
                         <h1 class="text-xl font-semibold text-white">{{ $heading ?? 'Admin Panel' }}</h1>

@@ -131,7 +131,9 @@ class ProviderServiceController extends Controller
         }
 
         if ($hasGalleryImages) {
-            $existingGallery = collect($service->gallery_images ?? []);
+            $existingGallery = collect($service->gallery_images ?? [])
+                ->filter(fn ($path) => Storage::disk('public')->exists($path))
+                ->values();
             $keptGallery = collect($request->input('keep_existing_gallery', []))
                 ->intersect($existingGallery)
                 ->values();

@@ -7,8 +7,8 @@
             <div class="grid w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#12141c]/90 shadow-[0_40px_90px_rgba(0,0,0,0.45)] md:grid-cols-[1.05fr_0.95fr]">
                 <div class="relative hidden md:block">
                     <img
-                        src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=1400&q=80"
-                        alt="Login visual"
+                        src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80"
+                        alt="Circuit board close-up"
                         class="h-full w-full object-cover"
                     >
                     <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-black/20"></div>

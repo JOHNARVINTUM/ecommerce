@@ -1,7 +1,7 @@
 @extends('layouts.guest')
 
 @section('content')
-<div class="w-full overflow-x-hidden bg-[#0e0e12] text-white">
+<div class="w-full overflow-x-clip bg-[#0e0e12] text-white">
     <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0d0e13]/90 backdrop-blur-md">
         <div class="flex w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <a href="{{ route('user.home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">

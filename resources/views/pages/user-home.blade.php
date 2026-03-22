@@ -64,7 +64,7 @@
     }
 </style>
 
-<div class="w-full overflow-x-hidden bg-[#0e0e12] text-white" id="page-top">
+<div class="w-full overflow-x-clip bg-[#0e0e12] text-white" id="page-top">
 
     {{-- ════════════════════ NAV ════════════════════ --}}
     <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0d0e13]/90 backdrop-blur-md">
@@ -263,7 +263,7 @@
                 <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-violet-500/20 blur-[80px]"></div>
                 <p class="mb-3 inline-block rounded-full border border-violet-400/20 bg-violet-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-violet-300">Top Talent</p>
                 <h3 class="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">Work with verified<br>IT experts only</h3>
-                <p class="mt-4 max-w-md text-sm leading-7 text-white/50">Every freelancer on LIMAX is vetted for technical skills, professionalism, and delivery. No guesswork — just results.</p>
+                <p class="mt-4 max-w-md text-sm leading-7 text-white/50">Every freelancer on LIMAX is vetted for technical skills, professionalism, and delivery. No guesswork just results.</p>
                 <a href="{{ route('services.index') }}" class="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold text-black hover:bg-white/90">
                     Browse Talent
                     <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>

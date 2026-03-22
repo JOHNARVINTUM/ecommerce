@@ -55,7 +55,7 @@ class ServiceListing extends Model
 
     public function getThumbnailUrlAttribute(): string
     {
-        if ($this->thumbnail_path) {
+        if ($this->thumbnail_path && Storage::disk('public')->exists($this->thumbnail_path)) {
             return Storage::url($this->thumbnail_path);
         }
 
@@ -66,6 +66,7 @@ class ServiceListing extends Model
     {
         $images = collect($this->gallery_images ?? [])
             ->filter()
+            ->filter(fn ($path) => Storage::disk('public')->exists($path))
             ->map(fn ($path) => Storage::url($path))
             ->values()
             ->all();
@@ -74,7 +75,7 @@ class ServiceListing extends Model
             return $images;
         }
 
-        if ($this->thumbnail_path) {
+        if ($this->thumbnail_path && Storage::disk('public')->exists($this->thumbnail_path)) {
             return array_fill(0, 5, Storage::url($this->thumbnail_path));
         }
 

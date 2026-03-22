@@ -105,11 +105,17 @@
                     </div>
                 </div>
 
-                @if (!empty($service->gallery_images))
+                @php
+                    $existingGalleryImages = collect($service->gallery_images ?? [])
+                        ->filter(fn ($imagePath) => \Illuminate\Support\Facades\Storage::disk('public')->exists($imagePath))
+                        ->values();
+                @endphp
+
+                @if ($existingGalleryImages->isNotEmpty())
                     <div>
                         <p class="mb-2 text-sm font-medium text-white/90">Current Gallery Images</p>
                         <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                            @foreach ($service->gallery_images as $imagePath)
+                            @foreach ($existingGalleryImages as $imagePath)
                                 <label class="rounded-lg border border-white/10 bg-white/[0.03] p-2">
                                     <img src="{{ \Illuminate\Support\Facades\Storage::url($imagePath) }}" alt="Gallery image" class="h-24 w-full rounded object-cover">
                                     <span class="mt-2 inline-flex items-center gap-2 text-xs text-white/85">

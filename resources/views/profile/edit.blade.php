@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+@extends($user->role === 'provider' ? 'layouts.provider' : 'layouts.guest')
 
 @php
     $profile = $user->profile;
@@ -36,7 +36,89 @@
         }
     </style>
 
-    <div class="min-h-screen w-full overflow-x-hidden bg-[#0d0e13] text-white">
+    @if ($user->role === 'provider')
+        <div class="space-y-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.26em] text-white/45">Provider Workspace</p>
+                    <h1 class="mt-2 text-3xl font-bold text-white">Profile</h1>
+                    <p class="mt-2 text-white/65">Manage your provider account details and contact information.</p>
+                </div>
+                <a href="{{ route('provider.orders.index') }}" class="rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 transition hover:border-white/35 hover:bg-white/10">
+                    Go to Orders
+                </a>
+            </div>
+
+            <div class="profile-panel rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.25)] sm:p-8" id="profile-panel">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-500/70 text-lg font-bold text-white">
+                            {{ $initials }}
+                        </div>
+                        <div>
+                            <p class="text-2xl font-semibold text-white">{{ $user->name }}</p>
+                            <p class="text-base text-white/55">{{ $user->email }}</p>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="profile-edit-toggle"
+                        class="rounded-xl border border-white/20 bg-white/5 px-5 py-2 text-sm font-semibold text-white transition hover:border-white/35 hover:bg-white/10"
+                    >
+                        Edit Profile
+                    </button>
+                </div>
+
+                @if (session('status') === 'profile-updated')
+                    <div class="mt-5 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-200">
+                        Profile updated successfully.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('profile.update') }}" class="mt-6" id="profile-edit-form" data-start-in-edit="{{ $startInEditMode ? '1' : '0' }}">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="grid gap-5 md:grid-cols-2">
+                        <div>
+                            <label for="name" class="mb-2 block text-sm font-semibold uppercase tracking-wider text-white/65">Name</label>
+                            <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" data-initial-value="{{ old('name', $user->name) }}" class="profile-input w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white placeholder:text-white/45 transition focus:border-white/35 focus:outline-none" required {{ $startInEditMode ? '' : 'disabled' }}>
+                            <x-input-error :messages="$errors->get('name')" class="mt-2 text-sm" />
+                        </div>
+
+                        <div>
+                            <label for="email" class="mb-2 block text-sm font-semibold uppercase tracking-wider text-white/65">Email</label>
+                            <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" data-initial-value="{{ old('email', $user->email) }}" class="profile-input w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white placeholder:text-white/45 transition focus:border-white/35 focus:outline-none" required {{ $startInEditMode ? '' : 'disabled' }}>
+                            <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm" />
+                        </div>
+
+                        <div>
+                            <label for="phone" class="mb-2 block text-sm font-semibold uppercase tracking-wider text-white/65">Mobile Number</label>
+                            <input id="phone" name="phone" type="text" value="{{ old('phone', $profile?->phone) }}" data-initial-value="{{ old('phone', $profile?->phone) }}" placeholder="Add number" class="profile-input w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white placeholder:text-white/45 transition focus:border-white/35 focus:outline-none" {{ $startInEditMode ? '' : 'disabled' }}>
+                            <x-input-error :messages="$errors->get('phone')" class="mt-2 text-sm" />
+                        </div>
+
+                        <div>
+                            <label for="location" class="mb-2 block text-sm font-semibold uppercase tracking-wider text-white/65">Address</label>
+                            <input id="location" name="location" type="text" value="{{ old('location', $profile?->location) }}" data-initial-value="{{ old('location', $profile?->location) }}" placeholder="Add address" class="profile-input w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-base text-white placeholder:text-white/45 transition focus:border-white/35 focus:outline-none" {{ $startInEditMode ? '' : 'disabled' }}>
+                            <x-input-error :messages="$errors->get('location')" class="mt-2 text-sm" />
+                        </div>
+                    </div>
+
+                    <div class="profile-edit-actions mt-8 flex flex-wrap items-center gap-3 {{ $startInEditMode ? '' : 'hidden' }}" id="profile-edit-actions">
+                        <button type="submit" class="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-[#111] transition hover:bg-white/90">
+                            Save Changes
+                        </button>
+                        <button type="button" id="profile-edit-cancel" class="rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-white/35 hover:bg-white/10">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @else
+    <div class="min-h-screen w-full overflow-x-clip bg-[#0d0e13] text-white">
         <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0d0e13]/90 backdrop-blur-md">
             <div class="flex w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                 <a href="{{ route('user.home') }}" class="text-3xl font-black uppercase leading-none tracking-[-0.08em] text-white sm:text-4xl">
@@ -193,6 +275,7 @@
 
         <x-auth-footer />
     </div>
+    @endif
 
     <script>
         (() => {
